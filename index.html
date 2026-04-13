@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Missão Matemática – Daniel</title>
+<title>Missão Matemática</title>
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -16,380 +16,363 @@
     --purple: #a855f7;
     --text: #f0f0ff;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     font-family: 'Nunito', sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
     overflow-x: hidden;
-    background-image: radial-gradient(ellipse at 20% 20%, #2d1b69 0%, transparent 50%),
-                      radial-gradient(ellipse at 80% 80%, #1a0536 0%, transparent 50%);
+    background-image:
+      radial-gradient(ellipse at 20% 20%, #2d1b69 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, #1a0536 0%, transparent 50%);
   }
-
-  /* Stars */
-  .stars {
-    position: fixed; inset: 0; pointer-events: none; z-index: 0;
-    overflow: hidden;
-  }
+  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
   .star {
-    position: absolute;
-    background: white;
-    border-radius: 50%;
+    position: absolute; background: white; border-radius: 50%;
     animation: twinkle var(--d) ease-in-out infinite;
   }
   @keyframes twinkle {
-    0%,100% { opacity: .2; transform: scale(1); }
-    50%      { opacity: 1;  transform: scale(1.4); }
+    0%,100% { opacity:.2; transform:scale(1); }
+    50%      { opacity:1;  transform:scale(1.4); }
   }
-
   .wrapper {
     position: relative; z-index: 1;
-    width: 100%; max-width: 480px;
+    width: 100%; max-width: 500px;
     padding: 16px;
     display: flex; flex-direction: column; align-items: center; gap: 16px;
   }
-
-  /* Header */
   .title {
     font-family: 'Bangers', cursive;
     font-size: clamp(2rem, 8vw, 3rem);
-    letter-spacing: 3px;
-    color: var(--accent);
+    letter-spacing: 3px; color: var(--accent);
     text-shadow: 0 0 20px rgba(249,199,79,.6), 3px 3px 0 #c77700;
     text-align: center;
     animation: popIn .6s cubic-bezier(.175,.885,.32,1.275) both;
   }
-  .subtitle {
-    font-size: .9rem; color: #aaa; margin-top: -10px;
-    animation: popIn .6s .1s cubic-bezier(.175,.885,.32,1.275) both;
-  }
+  .subtitle { font-size: .9rem; color: #aaa; margin-top: -10px; animation: popIn .6s .1s both; }
   @keyframes popIn {
-    from { opacity:0; transform: scale(.7) translateY(20px); }
-    to   { opacity:1; transform: none; }
+    from { opacity:0; transform:scale(.7) translateY(20px); }
+    to   { opacity:1; transform:none; }
   }
 
-  /* HUD */
-  .hud {
-    display: flex; gap: 12px; width: 100%;
-    animation: popIn .5s .2s both;
-  }
+  /* ── HUD ── */
+  .hud { display:flex; gap:12px; width:100%; animation: popIn .5s .2s both; }
   .hud-box {
-    flex: 1; background: var(--card);
-    border-radius: 12px; padding: 10px;
-    text-align: center;
-    border: 2px solid rgba(255,255,255,.08);
+    flex:1; background:var(--card); border-radius:12px; padding:10px;
+    text-align:center; border:2px solid rgba(255,255,255,.08);
   }
-  .hud-label { font-size: .7rem; text-transform: uppercase; letter-spacing: 1px; color: #888; }
-  .hud-val {
-    font-family: 'Bangers', cursive;
-    font-size: 1.8rem; letter-spacing: 1px;
-    color: var(--accent);
-    transition: color .3s;
-  }
-  .hud-val.green { color: var(--green); }
-  .hud-val.red   { color: var(--red);   }
+  .hud-label { font-size:.7rem; text-transform:uppercase; letter-spacing:1px; color:#888; }
+  .hud-val { font-family:'Bangers',cursive; font-size:1.8rem; letter-spacing:1px; color:var(--accent); transition:color .3s; }
+  .hud-val.green { color:var(--green); }
 
-  /* Progress bar */
-  .prog-bar {
-    width: 100%; height: 8px;
-    background: rgba(255,255,255,.1);
-    border-radius: 99px; overflow: hidden;
-  }
-  .prog-fill {
-    height: 100%; border-radius: 99px;
-    background: linear-gradient(90deg, var(--blue), var(--purple));
-    transition: width .5s ease;
-  }
+  /* ── PROGRESS ── */
+  .prog-bar { width:100%; height:8px; background:rgba(255,255,255,.1); border-radius:99px; overflow:hidden; }
+  .prog-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--blue),var(--purple)); transition:width .5s ease; }
 
-  /* Card */
+  /* ── CARD ── */
   .card {
-    width: 100%;
-    background: var(--card);
-    border-radius: 20px;
-    border: 2px solid rgba(255,255,255,.1);
-    padding: 28px 20px;
-    display: flex; flex-direction: column; align-items: center; gap: 20px;
-    box-shadow: 0 8px 40px rgba(0,0,0,.5);
-    animation: popIn .4s both;
+    width:100%; background:var(--card); border-radius:20px;
+    border:2px solid rgba(255,255,255,.1); padding:28px 20px;
+    display:flex; flex-direction:column; align-items:center; gap:20px;
+    box-shadow:0 8px 40px rgba(0,0,0,.5); animation:popIn .4s both;
   }
-
   .category-badge {
-    font-size: .75rem; font-weight: 900; text-transform: uppercase;
-    letter-spacing: 2px; padding: 4px 14px; border-radius: 99px;
+    font-size:.75rem; font-weight:900; text-transform:uppercase;
+    letter-spacing:2px; padding:4px 14px; border-radius:99px;
   }
-
   .question {
-    font-family: 'Bangers', cursive;
-    font-size: clamp(2rem, 10vw, 3.5rem);
-    letter-spacing: 2px;
-    text-align: center;
-    line-height: 1.15;
-    color: #fff;
-    text-shadow: 0 0 30px rgba(76,201,240,.3);
+    font-family:'Bangers',cursive; font-size:clamp(2rem,10vw,3.5rem);
+    letter-spacing:2px; text-align:center; line-height:1.15; color:#fff;
+    text-shadow:0 0 30px rgba(76,201,240,.3);
   }
 
-  /* Options */
-  .options {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px; width: 100%;
-  }
+  /* ── OPTIONS ── */
+  .options { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; }
   .opt {
-    background: rgba(255,255,255,.06);
-    border: 2px solid rgba(255,255,255,.12);
-    border-radius: 14px;
-    padding: 16px 8px;
-    font-family: 'Bangers', cursive;
-    font-size: 1.6rem;
-    letter-spacing: 1px;
-    color: #fff;
-    cursor: pointer;
-    transition: all .18s;
-    text-align: center;
+    background:rgba(255,255,255,.06); border:2px solid rgba(255,255,255,.12);
+    border-radius:14px; padding:16px 8px;
+    font-family:'Bangers',cursive; font-size:1.6rem; letter-spacing:1px;
+    color:#fff; cursor:pointer; transition:all .18s; text-align:center;
   }
-  .opt:hover:not(:disabled) {
-    background: rgba(76,201,240,.15);
-    border-color: var(--blue);
-    transform: translateY(-2px) scale(1.03);
-  }
-  .opt.correct {
-    background: rgba(67,233,123,.2);
-    border-color: var(--green);
-    color: var(--green);
-    animation: shake-correct .4s;
-  }
-  .opt.wrong {
-    background: rgba(247,37,133,.15);
-    border-color: var(--red);
-    color: var(--red);
-    animation: shake .4s;
-  }
-  @keyframes shake {
-    0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}
-  }
-  @keyframes shake-correct {
-    0%,100%{transform:scale(1)}50%{transform:scale(1.08)}
-  }
+  .opt:hover:not(:disabled) { background:rgba(76,201,240,.15); border-color:var(--blue); transform:translateY(-2px) scale(1.03); }
+  .opt.correct { background:rgba(67,233,123,.2); border-color:var(--green); color:var(--green); animation:shake-correct .4s; }
+  .opt.wrong   { background:rgba(247,37,133,.15); border-color:var(--red);   color:var(--red);   animation:shake .4s; }
+  @keyframes shake        { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  @keyframes shake-correct{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
 
-  /* Feedback */
-  .feedback {
-    font-size: 1.1rem; font-weight: 900;
-    text-align: center; min-height: 28px;
-    transition: opacity .2s;
-  }
-  .feedback.ok   { color: var(--green); }
-  .feedback.fail { color: var(--red); }
+  .feedback { font-size:1.1rem; font-weight:900; text-align:center; min-height:28px; }
+  .feedback.ok   { color:var(--green); }
+  .feedback.fail { color:var(--red); }
 
-  /* Timer */
-  .timer-ring { position: relative; width: 60px; height: 60px; }
-  .timer-ring svg { transform: rotate(-90deg); }
-  .timer-ring circle { fill: none; stroke-width: 5; }
-  .timer-ring .bg { stroke: rgba(255,255,255,.1); }
-  .timer-ring .fg {
-    stroke: var(--blue);
-    stroke-linecap: round;
-    stroke-dasharray: 163;
-    transition: stroke-dashoffset .9s linear, stroke .3s;
-  }
-  .timer-val {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Bangers', cursive; font-size: 1.3rem; color: #fff;
-  }
+  /* ── TIMER ── */
+  .timer-ring { position:relative; width:60px; height:60px; }
+  .timer-ring svg { transform:rotate(-90deg); }
+  .timer-ring circle { fill:none; stroke-width:5; }
+  .timer-ring .bg { stroke:rgba(255,255,255,.1); }
+  .timer-ring .fg { stroke:var(--blue); stroke-linecap:round; stroke-dasharray:163; transition:stroke-dashoffset .9s linear,stroke .3s; }
+  .timer-val { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Bangers',cursive; font-size:1.3rem; }
 
-  /* Level select */
-  .level-screen, .end-screen {
-    display: flex; flex-direction: column; align-items: center; gap: 16px;
-    text-align: center;
-    animation: popIn .5s both;
+  /* ── SCREENS ── */
+  .screen { display:flex; flex-direction:column; align-items:center; gap:16px; text-align:center; animation:popIn .5s both; width:100%; }
+
+  /* ── NAME INPUT ── */
+  .name-input {
+    width:100%; max-width:320px; padding:14px 18px;
+    background:rgba(255,255,255,.07); border:2px solid rgba(255,255,255,.2);
+    border-radius:14px; font-family:'Nunito',sans-serif; font-weight:900;
+    font-size:1.2rem; color:#fff; text-align:center; outline:none;
+    transition:border-color .2s;
   }
+  .name-input:focus { border-color:var(--blue); }
+  .name-input::placeholder { color:#666; font-weight:700; }
+
+  /* ── LEVEL BUTTONS ── */
   .level-btn {
-    width: 260px; padding: 14px 20px;
-    border-radius: 14px; border: none;
-    font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1rem;
-    cursor: pointer;
-    transition: all .18s;
-    display: flex; flex-direction: column; gap: 2px;
+    width:280px; padding:14px 20px; border-radius:14px; border:none;
+    font-family:'Nunito',sans-serif; font-weight:900; font-size:1rem;
+    cursor:pointer; transition:all .18s; display:flex; flex-direction:column; gap:2px;
   }
-  .level-btn:hover { transform: scale(1.04); }
-  .level-btn .lname { font-size: 1.1rem; }
-  .level-btn .ldesc { font-size: .78rem; opacity: .75; font-weight: 700; }
+  .level-btn:hover { transform:scale(1.04); }
+  .level-btn .lname { font-size:1.1rem; }
+  .level-btn .ldesc { font-size:.78rem; opacity:.75; font-weight:700; }
 
+  /* ── BUTTONS ── */
   .btn-primary {
-    background: linear-gradient(135deg, var(--accent), #f4a261);
-    color: #1a1a1a;
-    border: none; border-radius: 14px;
-    font-family: 'Nunito', sans-serif; font-weight: 900;
-    font-size: 1.1rem; padding: 14px 36px;
-    cursor: pointer;
-    transition: all .18s;
-    box-shadow: 0 4px 20px rgba(249,199,79,.4);
+    background:linear-gradient(135deg,var(--accent),#f4a261); color:#1a1a1a;
+    border:none; border-radius:14px;
+    font-family:'Nunito',sans-serif; font-weight:900; font-size:1.1rem;
+    padding:14px 36px; cursor:pointer; transition:all .18s;
+    box-shadow:0 4px 20px rgba(249,199,79,.4);
   }
-  .btn-primary:hover { transform: scale(1.05); box-shadow: 0 6px 30px rgba(249,199,79,.6); }
+  .btn-primary:hover { transform:scale(1.05); box-shadow:0 6px 30px rgba(249,199,79,.6); }
+  .btn-secondary {
+    background:rgba(255,255,255,.08); color:#fff;
+    border:2px solid rgba(255,255,255,.2); border-radius:14px;
+    font-family:'Nunito',sans-serif; font-weight:900; font-size:1rem;
+    padding:12px 28px; cursor:pointer; transition:all .18s;
+  }
+  .btn-secondary:hover { background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.4); }
 
-  /* Confetti */
+  /* ── RANKING ── */
+  .ranking-table { width:100%; border-collapse:collapse; }
+  .ranking-table th {
+    font-size:.7rem; text-transform:uppercase; letter-spacing:1px;
+    color:#888; padding:6px 10px; text-align:left;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .ranking-table td { padding:10px 10px; font-size:.95rem; border-bottom:1px solid rgba(255,255,255,.05); }
+  .ranking-table tr:first-child td { color:var(--accent); font-weight:900; }
+  .rank-pos { font-family:'Bangers',cursive; font-size:1.2rem; color:#666; width:32px; }
+  .rank-pos.gold   { color:#f9c74f; }
+  .rank-pos.silver { color:#aaa; }
+  .rank-pos.bronze { color:#cd7f32; }
+  .rank-score { font-family:'Bangers',cursive; font-size:1.3rem; color:var(--accent); text-align:right; }
+  .rank-level { font-size:.7rem; padding:2px 8px; border-radius:99px; font-weight:900; text-transform:uppercase; }
+  .rank-date  { font-size:.72rem; color:#666; }
+  .rank-highlight td { background:rgba(249,199,79,.07); }
+
+  /* ── CONFETTI ── */
   .confetti-piece {
-    position: fixed;
-    width: 8px; height: 8px;
-    border-radius: 2px;
-    pointer-events: none;
-    z-index: 999;
-    animation: confetti-fall var(--dur) ease-out forwards;
+    position:fixed; width:8px; height:8px; border-radius:2px;
+    pointer-events:none; z-index:999;
+    animation:confetti-fall var(--dur) ease-out forwards;
   }
   @keyframes confetti-fall {
-    0%   { transform: translateY(-20px) rotate(0); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    0%   { transform:translateY(-20px) rotate(0); opacity:1; }
+    100% { transform:translateY(100vh) rotate(720deg); opacity:0; }
   }
 
-  /* End screen stars */
-  .big-emoji { font-size: 4rem; animation: popIn .5s both; }
-  .end-score {
-    font-family: 'Bangers', cursive; font-size: 3rem;
-    color: var(--accent); letter-spacing: 2px;
+  .big-emoji { font-size:4rem; animation:popIn .5s both; }
+  .end-score { font-family:'Bangers',cursive; font-size:3rem; color:var(--accent); letter-spacing:2px; }
+  .btn-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .empty-ranking { color:#666; font-size:.95rem; padding:20px 0; }
+  .player-chip {
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(76,201,240,.12); border:1px solid rgba(76,201,240,.3);
+    border-radius:99px; padding:4px 14px; font-size:.85rem; font-weight:900; color:var(--blue);
   }
 </style>
 </head>
 <body>
 
 <div class="stars" id="stars"></div>
-
-<div class="wrapper" id="app">
-  <!-- Conteúdo dinâmico -->
-</div>
+<div class="wrapper" id="app"></div>
 
 <script>
-// ──── CONFIG ────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════════════
 const LEVELS = [
-  { id:'easy',   name:'🟢 Fácil',    desc:'Adição e Subtração', color:'#43e97b', bg:'rgba(67,233,123,.15)', ops:['+','-'],      range:[1,20],  time:20 },
-  { id:'medium', name:'🟡 Médio',    desc:'Multiplicação',      color:'#f9c74f', bg:'rgba(249,199,79,.15)', ops:['×','÷'],      range:[2,9],   time:18 },
-  { id:'hard',   name:'🔴 Difícil',  desc:'Misturão Total',         color:'#f72585', bg:'rgba(247,37,133,.15)', ops:['+','-','×'],  range:[1,50],  time:15 },
-  { id:'expert', name:'🟣 Expert',   desc:'Expressões com Parênteses', color:'#a855f7', bg:'rgba(168,85,247,.15)', ops:['paren'],      range:[1,15],  time:25 },
+  { id:'easy',   name:'🟢 Fácil',   desc:'Adição e Subtração',        color:'#43e97b', bg:'rgba(67,233,123,.15)',  ops:['+','-'],    range:[1,20],  time:20 },
+  { id:'medium', name:'🟡 Médio',   desc:'Multiplicação e Divisão',   color:'#f9c74f', bg:'rgba(249,199,79,.15)',  ops:['×','÷'],    range:[2,9],   time:18 },
+  { id:'hard',   name:'🔴 Difícil', desc:'Misturão Total',            color:'#f72585', bg:'rgba(247,37,133,.15)', ops:['+','-','×'], range:[1,50],  time:15 },
+  { id:'expert', name:'🟣 Expert',  desc:'Expressões com Parênteses', color:'#a855f7', bg:'rgba(168,85,247,.15)', ops:['paren'],     range:[1,15],  time:25 },
 ];
 const TOTAL_QUESTIONS = 10;
+const RANKING_KEY     = 'missaomat_ranking_v2';
+const MAX_RANKING     = 20;
 
-// ──── STATE ─────────────────────────────────────────────────────────────
-let state = { screen:'level', level:null, q:0, score:0, correct:0, timer:0, timerInt:null, current:null };
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+let state = {
+  screen:'name', player:'',
+  level:null, q:0, score:0, correct:0,
+  timer:0, timerInt:null, current:null
+};
 
-// ──── HELPERS ───────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
+//  RANKING (localStorage)
+// ══════════════════════════════════════════════════════
+function loadRanking(){
+  try { return JSON.parse(localStorage.getItem(RANKING_KEY)) || []; }
+  catch(e){ return []; }
+}
+function saveRanking(entry){
+  let r = loadRanking();
+  r.push(entry);
+  r.sort((a,b)=>b.score-a.score);
+  r = r.slice(0, MAX_RANKING);
+  localStorage.setItem(RANKING_KEY, JSON.stringify(r));
+  return r;
+}
+function clearRanking(){
+  localStorage.removeItem(RANKING_KEY);
+}
+
+// ══════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════
 function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
 function shuffle(a){ return [...a].sort(()=>Math.random()-.5); }
+function fmtDate(ts){
+  const d=new Date(ts);
+  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'})
+        +' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+function levelLabel(id){
+  return { easy:'Fácil', medium:'Médio', hard:'Difícil', expert:'Expert' }[id]||id;
+}
+function levelColor(id){
+  return { easy:'#43e97b', medium:'#f9c74f', hard:'#f72585', expert:'#a855f7' }[id]||'#aaa';
+}
+function medalOf(i){ return i===0?'gold':i===1?'silver':i===2?'bronze':''; }
+function medalEmoji(i){ return ['🥇','🥈','🥉'][i]||`${i+1}º`; }
 
-// ──── GERADOR DE EXPRESSÕES COM PARÊNTESES ───────────────────────────────
+// ══════════════════════════════════════════════════════
+//  QUESTION GENERATORS
+// ══════════════════════════════════════════════════════
 function genParenQuestion(){
-  // Escolhe aleatoriamente um dos 6 padrões de expressão
-  const pattern = rand(1,6);
-  let text, ans, category;
-
-  if(pattern===1){
-    // (a + b) × c
-    const a=rand(1,10), b=rand(1,10), c=rand(2,9);
-    ans=(a+b)*c; text=`(${a} + ${b}) × ${c} = ?`; category='(+) × c';
-  } else if(pattern===2){
-    // (a - b) × c  — garante a>b
-    const b=rand(1,8), a=rand(b+1,15), c=rand(2,9);
-    ans=(a-b)*c; text=`(${a} - ${b}) × ${c} = ?`; category='(-) × c';
-  } else if(pattern===3){
-    // a × (b + c)
-    const a=rand(2,9), b=rand(1,10), c=rand(1,10);
-    ans=a*(b+c); text=`${a} × (${b} + ${c}) = ?`; category='a × (+)';
-  } else if(pattern===4){
-    // a + (b × c)
-    const a=rand(1,20), b=rand(2,9), c=rand(2,9);
-    ans=a+(b*c); text=`${a} + (${b} × ${c}) = ?`; category='a + (×)';
-  } else if(pattern===5){
-    // (a + b) × (c + d)
-    const a=rand(1,8), b=rand(1,8), c=rand(1,5), d=rand(1,5);
-    ans=(a+b)*(c+d); text=`(${a}+${b}) × (${c}+${d}) = ?`; category='(+)×(+)';
-  } else {
-    // a × b - (c + d)
-    const c=rand(1,8), d=rand(1,8), a=rand(2,9), b=rand(2,9);
-    ans=a*b-(c+d); text=`${a}×${b} - (${c}+${d}) = ?`; category='a×b-(+)';
-  }
-
-  const wrongs = new Set();
-  while(wrongs.size<3){
-    let w = ans + rand(-8,8)*rand(1,4);
-    if(w!==ans && w>0) wrongs.add(w);
-  }
-  return { text, ans, choices: shuffle([ans,...wrongs]), category: '🔵 '+category, isParen: true };
+  const pattern=rand(1,6);
+  let text,ans,category;
+  if(pattern===1){ const a=rand(1,10),b=rand(1,10),c=rand(2,9); ans=(a+b)*c; text=`(${a}+${b}) × ${c} = ?`; category='(+)×c'; }
+  else if(pattern===2){ const b=rand(1,8),a=rand(b+1,15),c=rand(2,9); ans=(a-b)*c; text=`(${a}-${b}) × ${c} = ?`; category='(-)×c'; }
+  else if(pattern===3){ const a=rand(2,9),b=rand(1,10),c=rand(1,10); ans=a*(b+c); text=`${a} × (${b}+${c}) = ?`; category='a×(+)'; }
+  else if(pattern===4){ const a=rand(1,20),b=rand(2,9),c=rand(2,9); ans=a+(b*c); text=`${a} + (${b}×${c}) = ?`; category='a+(×)'; }
+  else if(pattern===5){ const a=rand(1,8),b=rand(1,8),c=rand(1,5),d=rand(1,5); ans=(a+b)*(c+d); text=`(${a}+${b})×(${c}+${d}) = ?`; category='(+)×(+)'; }
+  else { const c=rand(1,8),d=rand(1,8),a=rand(2,9),b=rand(2,9); ans=a*b-(c+d); text=`${a}×${b}-(${c}+${d}) = ?`; category='a×b-(+)'; }
+  const wrongs=new Set();
+  while(wrongs.size<3){ const w=ans+rand(-8,8)*rand(1,4); if(w!==ans&&w>0) wrongs.add(w); }
+  return { text, ans, choices:shuffle([ans,...wrongs]), category:'🔵 '+category, isParen:true };
 }
 
 function genQuestion(level){
   if(level.ops[0]==='paren') return genParenQuestion();
-
-  const op = level.ops[rand(0,level.ops.length-1)];
+  const op=level.ops[rand(0,level.ops.length-1)];
   let a,b,ans;
   if(op==='+'){  a=rand(level.range[0],level.range[1]); b=rand(level.range[0],level.range[1]); ans=a+b; }
   if(op==='-'){  a=rand(level.range[0],level.range[1]); b=rand(0,a); ans=a-b; }
   if(op==='×'){  a=rand(2,level.range[1]); b=rand(2,level.range[1]); ans=a*b; }
   if(op==='÷'){  b=rand(2,level.range[1]); ans=rand(2,level.range[1]); a=b*ans; }
-  // Wrong choices
-  const wrongs = new Set();
-  while(wrongs.size<3){
-    let w = ans + rand(-5,5)*rand(1,3);
-    if(w!==ans && w>=0) wrongs.add(w);
-  }
-  const choices = shuffle([ans,...wrongs]);
-  return { text:`${a} ${op} ${b} = ?`, ans, choices,
-           category: { '+':'Adição', '-':'Subtração', '×':'Multiplicação', '÷':'Divisão' }[op] };
+  const wrongs=new Set();
+  while(wrongs.size<3){ const w=ans+rand(-5,5)*rand(1,3); if(w!==ans&&w>=0) wrongs.add(w); }
+  return { text:`${a} ${op} ${b} = ?`, ans, choices:shuffle([ans,...wrongs]),
+           category:{ '+':'Adição', '-':'Subtração', '×':'Multiplicação', '÷':'Divisão' }[op] };
 }
 
-// ──── STARS ─────────────────────────────────────────────────────────────
-(function createStars(){
-  const c = document.getElementById('stars');
+// ══════════════════════════════════════════════════════
+//  STARS
+// ══════════════════════════════════════════════════════
+(function(){
+  const c=document.getElementById('stars');
   for(let i=0;i<80;i++){
-    const s = document.createElement('div');
-    s.className='star';
-    const sz = Math.random()*2.5+.5;
+    const s=document.createElement('div'); s.className='star';
+    const sz=Math.random()*2.5+.5;
     s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${(Math.random()*3+1).toFixed(1)}s;animation-delay:${(Math.random()*3).toFixed(1)}s`;
     c.appendChild(s);
   }
 })();
 
-// ──── CONFETTI ──────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
+//  CONFETTI
+// ══════════════════════════════════════════════════════
 function confetti(){
   const colors=['#f9c74f','#43e97b','#4cc9f0','#a855f7','#f72585','#fff'];
-  for(let i=0;i<60;i++){
-    const el=document.createElement('div');
-    el.className='confetti-piece';
-    el.style.cssText=`left:${Math.random()*100}vw;background:${colors[rand(0,colors.length-1)]};--dur:${(Math.random()*1.5+.8).toFixed(2)}s;animation-delay:${(Math.random()*.5).toFixed(2)}s`;
+  for(let i=0;i<70;i++){
+    const el=document.createElement('div'); el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;background:${colors[rand(0,colors.length-1)]};--dur:${(Math.random()*1.5+.8).toFixed(2)}s;animation-delay:${(Math.random()*.6).toFixed(2)}s`;
     document.body.appendChild(el);
-    setTimeout(()=>el.remove(),2500);
+    setTimeout(()=>el.remove(),2600);
   }
 }
 
-// ──── TIMER ─────────────────────────────────────────────────────────────
-function startTimer(seconds, onTick, onEnd){
+// ══════════════════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════════════════
+function startTimer(seconds,onTick,onEnd){
   clearInterval(state.timerInt);
-  state.timer = seconds;
-  onTick(seconds, seconds);
-  state.timerInt = setInterval(()=>{
+  state.timer=seconds; onTick(seconds,seconds);
+  state.timerInt=setInterval(()=>{
     state.timer--;
-    onTick(state.timer, seconds);
+    onTick(state.timer,seconds);
     if(state.timer<=0){ clearInterval(state.timerInt); onEnd(); }
   },1000);
 }
 
-// ──── RENDER ─────────────────────────────────────────────────────────────
-const app = document.getElementById('app');
-
+// ══════════════════════════════════════════════════════
+//  RENDER ENGINE
+// ══════════════════════════════════════════════════════
+const app=document.getElementById('app');
 function render(){
-  if(state.screen==='level') renderLevel();
-  else if(state.screen==='game') renderGame();
-  else if(state.screen==='end') renderEnd();
+  if(state.screen==='name')    renderName();
+  else if(state.screen==='level')   renderLevel();
+  else if(state.screen==='game')    renderGame();
+  else if(state.screen==='end')     renderEnd();
+  else if(state.screen==='ranking') renderRanking();
 }
 
+// ── TELA 1: NOME ──────────────────────────────────────
+function renderName(){
+  app.innerHTML=`
+    <div class="title">🚀 Missão<br>Matemática</div>
+    <div class="subtitle">O jogo de contas mais épico da galáxia!</div>
+    <div class="screen">
+      <div class="card" style="gap:18px;padding:28px 24px;max-width:340px">
+        <div style="font-size:2rem">👾</div>
+        <div style="font-weight:900;font-size:1.1rem">Qual é o seu nome, astronauta?</div>
+        <input id="nameInput" class="name-input" maxlength="20"
+          placeholder="Digite seu nome..." autocomplete="off"
+          onkeydown="if(event.key==='Enter') confirmName()"
+          value="${state.player}">
+        <button class="btn-primary" onclick="confirmName()" style="width:100%">Entrar na Missão 🚀</button>
+      </div>
+      ${loadRanking().length>0?`
+        <button class="btn-secondary" onclick="goScreen('ranking')">🏆 Ver Ranking</button>
+      `:''}
+    </div>`;
+  setTimeout(()=>{ const el=document.getElementById('nameInput'); if(el) el.focus(); },100);
+}
+
+// ── TELA 2: NÍVEL ─────────────────────────────────────
 function renderLevel(){
   app.innerHTML=`
     <div class="title">🚀 Missão<br>Matemática</div>
-    <div class="subtitle">Escolha a dificuldade, Daniel!</div>
-    <div class="level-screen">
+    <div class="player-chip">👾 ${state.player}</div>
+    <div class="screen">
+      <div style="font-weight:900;font-size:1rem;color:#aaa">Escolha a dificuldade:</div>
       ${LEVELS.map(l=>`
         <button class="level-btn" onclick="startGame('${l.id}')"
           style="background:${l.bg};border:2px solid ${l.color};color:#fff">
@@ -397,33 +380,39 @@ function renderLevel(){
           <span class="ldesc">${l.desc} · ⏱ ${l.time}s por questão</span>
         </button>
       `).join('')}
+      <div class="btn-row" style="margin-top:4px">
+        <button class="btn-secondary" onclick="goScreen('name')">← Trocar Nome</button>
+        ${loadRanking().length>0?`<button class="btn-secondary" onclick="goScreen('ranking')">🏆 Ranking</button>`:''}
+      </div>
     </div>`;
 }
 
+// ── TELA 3: JOGO ──────────────────────────────────────
 function renderGame(){
-  const lvl = state.level;
-  const q = state.current;
-  const progPct = (state.q / TOTAL_QUESTIONS)*100;
-  const catColor = { 'Adição':lvl.color,'Subtração':'#4cc9f0','Multiplicação':'#a855f7','Divisão':'#f9c74f' }[q.category]||lvl.color;
+  const lvl=state.level, q=state.current;
+  const progPct=(state.q/TOTAL_QUESTIONS)*100;
+  const catColor={ 'Adição':lvl.color,'Subtração':'#4cc9f0','Multiplicação':'#a855f7','Divisão':'#f9c74f' }[q.category]||lvl.color;
 
   app.innerHTML=`
-    <div class="title" style="font-size:1.8rem">🚀 Missão Matemática</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px">
+      <div class="title" style="font-size:1.4rem;margin:0">🚀 Missão Mat.</div>
+      <div class="player-chip">👾 ${state.player}</div>
+    </div>
 
     <div class="hud">
       <div class="hud-box">
         <div class="hud-label">Questão</div>
-        <div class="hud-val">${state.q+1}<span style="font-size:.9rem;color:#666">/${TOTAL_QUESTIONS}</span></div>
+        <div class="hud-val">${state.q+1}<span style="font-size:.9rem;color:#555">/${TOTAL_QUESTIONS}</span></div>
       </div>
       <div class="hud-box">
         <div class="hud-label">Pontos</div>
         <div class="hud-val green" id="scoreVal">${state.score}</div>
       </div>
-      <div class="hud-box" style="flex:0 0 70px">
+      <div class="hud-box" style="flex:0 0 72px">
         <div class="timer-ring">
           <svg width="60" height="60" viewBox="0 0 60 60">
             <circle class="bg" cx="30" cy="30" r="26"/>
-            <circle class="fg" id="timerArc" cx="30" cy="30" r="26"
-              stroke-dashoffset="0"/>
+            <circle class="fg" id="timerArc" cx="30" cy="30" r="26" stroke-dashoffset="0"/>
           </svg>
           <div class="timer-val" id="timerVal">${lvl.time}</div>
         </div>
@@ -436,108 +425,154 @@ function renderGame(){
       <span class="category-badge" style="background:${catColor}22;color:${catColor};border:1px solid ${catColor}40">${q.category}</span>
       <div class="question" style="font-size:${q.isParen?'clamp(1.3rem,6vw,2.2rem)':'clamp(2rem,10vw,3.5rem)'}">${q.text}</div>
       <div class="options" id="opts">
-        ${q.choices.map(c=>`
-          <button class="opt" onclick="answer(${c},this)">${c}</button>
-        `).join('')}
+        ${q.choices.map(c=>`<button class="opt" onclick="answer(${c},this)">${c}</button>`).join('')}
       </div>
       <div class="feedback" id="fb"></div>
     </div>`;
 
-  // Start timer
-  const arc = document.getElementById('timerArc');
-  const circ = 2*Math.PI*26; // ~163
+  const circ=2*Math.PI*26;
   startTimer(lvl.time,
     (t,total)=>{
-      const el=document.getElementById('timerVal');
-      const arcEl=document.getElementById('timerArc');
+      const el=document.getElementById('timerVal'), arc=document.getElementById('timerArc');
       if(el) el.textContent=t;
-      if(arcEl){
-        const offset = circ*(1-t/total);
-        arcEl.style.strokeDashoffset=offset;
-        arcEl.style.stroke = t<=5?'#f72585':t<=8?'#f9c74f':'#4cc9f0';
-      }
+      if(arc){ arc.style.strokeDashoffset=circ*(1-t/total); arc.style.stroke=t<=5?'#f72585':t<=8?'#f9c74f':'#4cc9f0'; }
     },
-    ()=>{ timeOut(); }
+    ()=>timeOut()
   );
 }
 
+// ── TELA 4: FIM ───────────────────────────────────────
 function renderEnd(){
   clearInterval(state.timerInt);
-  const pct = Math.round(state.correct/TOTAL_QUESTIONS*100);
-  const emoji = pct>=90?'🏆':pct>=60?'⭐':'💪';
-  const msg   = pct>=90?'Incrível, Daniel!':pct>=60?'Muito bem!':'Continue tentando!';
-  const sub   = pct>=90?'Você é um gênio da matemática!':pct>=60?'Ótimo desempenho!':'A prática leva à perfeição!';
+  const pct=Math.round(state.correct/TOTAL_QUESTIONS*100);
+  const emoji=pct>=90?'🏆':pct>=60?'⭐':'💪';
+  const msg=pct>=90?`Incrível, ${state.player}!`:pct>=60?`Muito bem, ${state.player}!`:`Continue tentando, ${state.player}!`;
+  const sub=pct>=90?'Você é um gênio da matemática!':pct>=60?'Ótimo desempenho!':'A prática leva à perfeição!';
   if(pct>=60) confetti();
+
+  // Salva no ranking
+  const entry={ name:state.player, score:state.score, correct:state.correct, level:state.level.id, ts:Date.now() };
+  const ranking=saveRanking(entry);
+  const myPos=ranking.findIndex(r=>r.ts===entry.ts);
+
   app.innerHTML=`
-    <div class="end-screen">
+    <div class="screen">
       <div class="big-emoji">${emoji}</div>
-      <div class="title">${msg}</div>
+      <div class="title" style="font-size:2rem">${msg}</div>
       <div class="subtitle">${sub}</div>
-      <div class="card" style="gap:12px;padding:24px">
-        <div style="font-size:.85rem;color:#888;text-transform:uppercase;letter-spacing:1px">Resultado Final</div>
+      <div class="card" style="gap:14px;padding:24px">
+        <div style="font-size:.8rem;color:#888;text-transform:uppercase;letter-spacing:1px">Resultado Final</div>
         <div class="end-score">${state.score} pts</div>
-        <div style="color:#aaa;font-size:.95rem">
+        <div style="color:#aaa;font-size:.9rem">
           ✅ ${state.correct} certas &nbsp;|&nbsp;
           ❌ ${TOTAL_QUESTIONS-state.correct} erradas &nbsp;|&nbsp;
           🎯 ${pct}%
         </div>
+        ${myPos>=0?`
+          <div style="margin-top:4px;font-size:.88rem;color:${levelColor(state.level.id)};font-weight:900">
+            ${myPos===0?'🥇 Novo recorde! 1º lugar!':myPos===1?'🥈 2º lugar no ranking!':myPos===2?'🥉 3º lugar no ranking!':`📊 ${myPos+1}º lugar no ranking`}
+          </div>`:''}
       </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+      <div class="btn-row">
         <button class="btn-primary" onclick="startGame('${state.level.id}')">🔄 Jogar de Novo</button>
-        <button class="btn-primary" style="background:linear-gradient(135deg,#4cc9f0,#a855f7);color:#fff"
-          onclick="goLevel()">🏠 Trocar Nível</button>
+        <button class="btn-secondary" onclick="goScreen('level')">🎮 Mudar Nível</button>
       </div>
+      <button class="btn-secondary" onclick="goScreen('ranking')" style="width:200px">🏆 Ver Ranking</button>
     </div>`;
 }
 
-// ──── ACTIONS ────────────────────────────────────────────────────────────
-function startGame(levelId){
-  clearInterval(state.timerInt);
-  state.level   = LEVELS.find(l=>l.id===levelId);
-  state.q       = 0;
-  state.score   = 0;
-  state.correct = 0;
-  state.screen  = 'game';
-  state.current = genQuestion(state.level);
-  render();
+// ── TELA 5: RANKING ───────────────────────────────────
+function renderRanking(){
+  const ranking=loadRanking();
+  app.innerHTML=`
+    <div class="title" style="font-size:2rem">🏆 Ranking</div>
+    <div class="subtitle">As maiores pontuações da galáxia</div>
+    <div class="card" style="padding:16px 12px;gap:0">
+      ${ranking.length===0
+        ? `<div class="empty-ranking">Nenhuma pontuação ainda.<br>Seja o primeiro! 🚀</div>`
+        : `<table class="ranking-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Jogador</th>
+                <th>Nível</th>
+                <th style="text-align:right">Pts</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${ranking.map((r,i)=>`
+                <tr class="${r.name===state.player?'rank-highlight':''}">
+                  <td class="rank-pos ${medalOf(i)}">${medalEmoji(i)}</td>
+                  <td style="font-weight:900">${r.name}</td>
+                  <td><span class="rank-level" style="background:${levelColor(r.level)}22;color:${levelColor(r.level)}">${levelLabel(r.level)}</span></td>
+                  <td class="rank-score">${r.score}</td>
+                  <td class="rank-date">${fmtDate(r.ts)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>`
+      }
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="goScreen('level')">🎮 Jogar</button>
+      <button class="btn-secondary" onclick="goScreen('name')">👾 Trocar Nome</button>
+    </div>
+    ${ranking.length>0?`
+      <button onclick="if(confirm('Apagar todo o ranking?')){clearRanking();renderRanking();}"
+        style="background:none;border:none;color:#555;font-size:.8rem;cursor:pointer;font-family:Nunito,sans-serif;font-weight:700;margin-top:-8px">
+        🗑 Apagar ranking
+      </button>`:''}`;
 }
 
-function goLevel(){
-  clearInterval(state.timerInt);
+// ══════════════════════════════════════════════════════
+//  ACTIONS
+// ══════════════════════════════════════════════════════
+function confirmName(){
+  const val=(document.getElementById('nameInput')?.value||'').trim();
+  if(!val){ document.getElementById('nameInput')?.focus(); return; }
+  state.player=val;
   state.screen='level';
   render();
 }
 
-function answer(val, btn){
+function goScreen(s){ clearInterval(state.timerInt); state.screen=s; render(); }
+
+function startGame(levelId){
   clearInterval(state.timerInt);
-  const opts = document.querySelectorAll('.opt');
+  state.level  =LEVELS.find(l=>l.id===levelId);
+  state.q      =0; state.score=0; state.correct=0;
+  state.screen ='game';
+  state.current=genQuestion(state.level);
+  render();
+}
+
+function answer(val,btn){
+  clearInterval(state.timerInt);
+  const opts=document.querySelectorAll('.opt');
   opts.forEach(o=>o.disabled=true);
-  const fb = document.getElementById('fb');
-  const isCorrect = val===state.current.ans;
+  const fb=document.getElementById('fb');
+  const isCorrect=val===state.current.ans;
   if(isCorrect){
     btn.classList.add('correct');
-    state.score += 10 + state.timer; // bônus velocidade
-    state.correct++;
+    state.score+=10+state.timer; state.correct++;
     document.getElementById('scoreVal').textContent=state.score;
-    fb.className='feedback ok';
-    fb.textContent='✅ Correto! +' + (10+state.timer) + ' pts';
+    fb.className='feedback ok'; fb.textContent=`✅ Correto! +${10+state.timer} pts`;
   } else {
     btn.classList.add('wrong');
-    // Highlight correct
     opts.forEach(o=>{ if(Number(o.textContent)===state.current.ans) o.classList.add('correct'); });
-    fb.className='feedback fail';
-    fb.textContent=`❌ Era ${state.current.ans}`;
+    fb.className='feedback fail'; fb.textContent=`❌ Era ${state.current.ans}`;
   }
-  setTimeout(nextQ, 1200);
+  setTimeout(nextQ,1200);
 }
 
 function timeOut(){
-  const opts = document.querySelectorAll('.opt');
+  const opts=document.querySelectorAll('.opt');
   opts.forEach(o=>o.disabled=true);
   opts.forEach(o=>{ if(Number(o.textContent)===state.current.ans) o.classList.add('correct'); });
   const fb=document.getElementById('fb');
   if(fb){ fb.className='feedback fail'; fb.textContent=`⏰ Tempo! Era ${state.current.ans}`; }
-  setTimeout(nextQ, 1300);
+  setTimeout(nextQ,1300);
 }
 
 function nextQ(){
@@ -547,7 +582,9 @@ function nextQ(){
   renderGame();
 }
 
-// ──── INIT ───────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
 render();
 </script>
 </body>
