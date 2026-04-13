@@ -1,591 +1,1125 @@
 <!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║         MISSÃO MATEMÁTICA — CÓDIGO COMENTADO                ║
+  ║  Arquivo único HTML que contém: estrutura + estilo + lógica ║
+  ║  Em desenvolvimento web, chamamos isso de "Single Page App" ║
+  ╚══════════════════════════════════════════════════════════════╝
+
+  Um arquivo HTML tem 3 partes principais:
+  1. <head>  → configurações invisíveis (título, fontes, estilos CSS)
+  2. <body>  → o que aparece na tela
+  3. <script>→ a lógica do programa (JavaScript)
+-->
+
 <html lang="pt-BR">
+<!-- lang="pt-BR" diz ao navegador que o idioma é Português do Brasil -->
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Missão Matemática</title>
-<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0f0c29;
-    --card: #1a1a3e;
-    --accent: #f9c74f;
-    --green: #43e97b;
-    --red: #f72585;
-    --blue: #4cc9f0;
-    --purple: #a855f7;
-    --text: #f0f0ff;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    overflow-x: hidden;
-    background-image:
-      radial-gradient(ellipse at 20% 20%, #2d1b69 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, #1a0536 0%, transparent 50%);
-  }
-  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-  .star {
-    position: absolute; background: white; border-radius: 50%;
-    animation: twinkle var(--d) ease-in-out infinite;
-  }
-  @keyframes twinkle {
-    0%,100% { opacity:.2; transform:scale(1); }
-    50%      { opacity:1;  transform:scale(1.4); }
-  }
-  .wrapper {
-    position: relative; z-index: 1;
-    width: 100%; max-width: 500px;
-    padding: 16px;
-    display: flex; flex-direction: column; align-items: center; gap: 16px;
-  }
-  .title {
-    font-family: 'Bangers', cursive;
-    font-size: clamp(2rem, 8vw, 3rem);
-    letter-spacing: 3px; color: var(--accent);
-    text-shadow: 0 0 20px rgba(249,199,79,.6), 3px 3px 0 #c77700;
-    text-align: center;
-    animation: popIn .6s cubic-bezier(.175,.885,.32,1.275) both;
-  }
-  .subtitle { font-size: .9rem; color: #aaa; margin-top: -10px; animation: popIn .6s .1s both; }
-  @keyframes popIn {
-    from { opacity:0; transform:scale(.7) translateY(20px); }
-    to   { opacity:1; transform:none; }
-  }
+  <meta charset="UTF-8">
+  <!-- charset=UTF-8: aceita acentos, emojis e caracteres especiais -->
 
-  /* ── HUD ── */
-  .hud { display:flex; gap:12px; width:100%; animation: popIn .5s .2s both; }
-  .hud-box {
-    flex:1; background:var(--card); border-radius:12px; padding:10px;
-    text-align:center; border:2px solid rgba(255,255,255,.08);
-  }
-  .hud-label { font-size:.7rem; text-transform:uppercase; letter-spacing:1px; color:#888; }
-  .hud-val { font-family:'Bangers',cursive; font-size:1.8rem; letter-spacing:1px; color:var(--accent); transition:color .3s; }
-  .hud-val.green { color:var(--green); }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- viewport: faz o site se adaptar ao tamanho de qualquer tela (celular, tablet, PC) -->
 
-  /* ── PROGRESS ── */
-  .prog-bar { width:100%; height:8px; background:rgba(255,255,255,.1); border-radius:99px; overflow:hidden; }
-  .prog-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--blue),var(--purple)); transition:width .5s ease; }
+  <title>Missão Matemática</title>
+  <!-- Título que aparece na aba do navegador -->
 
-  /* ── CARD ── */
-  .card {
-    width:100%; background:var(--card); border-radius:20px;
-    border:2px solid rgba(255,255,255,.1); padding:28px 20px;
-    display:flex; flex-direction:column; align-items:center; gap:20px;
-    box-shadow:0 8px 40px rgba(0,0,0,.5); animation:popIn .4s both;
-  }
-  .category-badge {
-    font-size:.75rem; font-weight:900; text-transform:uppercase;
-    letter-spacing:2px; padding:4px 14px; border-radius:99px;
-  }
-  .question {
-    font-family:'Bangers',cursive; font-size:clamp(2rem,10vw,3.5rem);
-    letter-spacing:2px; text-align:center; line-height:1.15; color:#fff;
-    text-shadow:0 0 30px rgba(76,201,240,.3);
-  }
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <!--
+    Importa duas fontes do Google Fonts (serviço gratuito):
+    - Bangers: fonte estilosa para títulos e números grandes
+    - Nunito: fonte arredondada para textos normais (weight 400=normal, 700=bold, 900=black)
+  -->
 
-  /* ── OPTIONS ── */
-  .options { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; }
-  .opt {
-    background:rgba(255,255,255,.06); border:2px solid rgba(255,255,255,.12);
-    border-radius:14px; padding:16px 8px;
-    font-family:'Bangers',cursive; font-size:1.6rem; letter-spacing:1px;
-    color:#fff; cursor:pointer; transition:all .18s; text-align:center;
-  }
-  .opt:hover:not(:disabled) { background:rgba(76,201,240,.15); border-color:var(--blue); transform:translateY(-2px) scale(1.03); }
-  .opt.correct { background:rgba(67,233,123,.2); border-color:var(--green); color:var(--green); animation:shake-correct .4s; }
-  .opt.wrong   { background:rgba(247,37,133,.15); border-color:var(--red);   color:var(--red);   animation:shake .4s; }
-  @keyframes shake        { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
-  @keyframes shake-correct{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+  <style>
+    /*
+    ════════════════════════════════════════════════════
+      CSS — Cascading Style Sheets
+      Define cores, tamanhos, posições e animações.
+      Tudo entre /* e * / é comentário em CSS.
+    ════════════════════════════════════════════════════
+    */
 
-  .feedback { font-size:1.1rem; font-weight:900; text-align:center; min-height:28px; }
-  .feedback.ok   { color:var(--green); }
-  .feedback.fail { color:var(--red); }
+    /* ── VARIÁVEIS GLOBAIS DE COR ──────────────────────
+       :root é o elemento raiz do HTML (o "pai de tudo").
+       Declarar variáveis aqui permite reusar as mesmas
+       cores em qualquer lugar do CSS usando var(--nome).
+       Se quiser mudar uma cor, muda só aqui e aplica em todo o site.
+    */
+    :root {
+      --bg:     #0f0c29; /* azul escuro quase preto — fundo principal */
+      --card:   #1a1a3e; /* azul escuro — cor dos cartões/painéis */
+      --accent: #f9c74f; /* amarelo dourado — cor de destaque */
+      --green:  #43e97b; /* verde — acerto */
+      --red:    #f72585; /* rosa/vermelho — erro */
+      --blue:   #4cc9f0; /* azul claro — timer e detalhes */
+      --purple: #a855f7; /* roxo — nivel expert */
+      --text:   #f0f0ff; /* branco levemente azulado — texto */
+    }
 
-  /* ── TIMER ── */
-  .timer-ring { position:relative; width:60px; height:60px; }
-  .timer-ring svg { transform:rotate(-90deg); }
-  .timer-ring circle { fill:none; stroke-width:5; }
-  .timer-ring .bg { stroke:rgba(255,255,255,.1); }
-  .timer-ring .fg { stroke:var(--blue); stroke-linecap:round; stroke-dasharray:163; transition:stroke-dashoffset .9s linear,stroke .3s; }
-  .timer-val { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Bangers',cursive; font-size:1.3rem; }
+    /* ── RESET UNIVERSAL ───────────────────────────────
+       O seletor * seleciona TODOS os elementos da página.
+       box-sizing: border-box → o padding e border ficam
+       DENTRO da largura declarada (evita elementos "estourarem").
+       margin/padding: 0 → remove espaçamentos padrão do navegador.
+    */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ── SCREENS ── */
-  .screen { display:flex; flex-direction:column; align-items:center; gap:16px; text-align:center; animation:popIn .5s both; width:100%; }
+    /* ── BODY (FUNDO DA PÁGINA) ─────────────────────── */
+    body {
+      font-family: 'Nunito', sans-serif; /* fonte padrão de todo o site */
+      background: var(--bg);             /* cor de fundo usando variável */
+      color: var(--text);                /* cor de texto padrão */
+      min-height: 100vh;                 /* vh = viewport height; 100vh = altura total da tela */
+      display: flex;                     /* ativa Flexbox (sistema de layout moderno) */
+      flex-direction: column;            /* empilha os filhos na vertical */
+      align-items: center;               /* centraliza horizontalmente */
+      justify-content: center;           /* centraliza verticalmente */
+      overflow-x: hidden;                /* esconde qualquer conteúdo que vaze para o lado */
+      background-image:
+        /* radial-gradient: cria um gradiente circular — como um "brilho" */
+        radial-gradient(ellipse at 20% 20%, #2d1b69 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, #1a0536 0%, transparent 50%);
+        /* Dois gradientes sobrepostos criam o efeito de nebulosa no fundo */
+    }
 
-  /* ── NAME INPUT ── */
-  .name-input {
-    width:100%; max-width:320px; padding:14px 18px;
-    background:rgba(255,255,255,.07); border:2px solid rgba(255,255,255,.2);
-    border-radius:14px; font-family:'Nunito',sans-serif; font-weight:900;
-    font-size:1.2rem; color:#fff; text-align:center; outline:none;
-    transition:border-color .2s;
-  }
-  .name-input:focus { border-color:var(--blue); }
-  .name-input::placeholder { color:#666; font-weight:700; }
+    /* ── ESTRELAS (fundo animado) ───────────────────────
+       As estrelas são criadas pelo JavaScript e inseridas
+       dentro deste div. Ele fica fixo cobrindo toda a tela,
+       atrás de tudo (z-index: 0), sem receber cliques.
+    */
+    .stars {
+      position: fixed;        /* fica parado mesmo se o usuário rolar a tela */
+      inset: 0;               /* atalho para top:0; right:0; bottom:0; left:0 */
+      pointer-events: none;   /* cliques "passam através" deste elemento */
+      z-index: 0;             /* camada 0 = fica atrás de tudo */
+      overflow: hidden;
+    }
 
-  /* ── LEVEL BUTTONS ── */
-  .level-btn {
-    width:280px; padding:14px 20px; border-radius:14px; border:none;
-    font-family:'Nunito',sans-serif; font-weight:900; font-size:1rem;
-    cursor:pointer; transition:all .18s; display:flex; flex-direction:column; gap:2px;
-  }
-  .level-btn:hover { transform:scale(1.04); }
-  .level-btn .lname { font-size:1.1rem; }
-  .level-btn .ldesc { font-size:.78rem; opacity:.75; font-weight:700; }
+    /* Cada estrela individual — um círculo branco pequeno */
+    .star {
+      position: absolute;   /* posicionada livremente dentro de .stars */
+      background: white;
+      border-radius: 50%;   /* 50% transforma o quadrado em círculo */
+      /* var(--d) é uma variável CSS definida inline pelo JavaScript
+         para que cada estrela tenha duração de animação diferente */
+      animation: twinkle var(--d) ease-in-out infinite;
+    }
 
-  /* ── BUTTONS ── */
-  .btn-primary {
-    background:linear-gradient(135deg,var(--accent),#f4a261); color:#1a1a1a;
-    border:none; border-radius:14px;
-    font-family:'Nunito',sans-serif; font-weight:900; font-size:1.1rem;
-    padding:14px 36px; cursor:pointer; transition:all .18s;
-    box-shadow:0 4px 20px rgba(249,199,79,.4);
-  }
-  .btn-primary:hover { transform:scale(1.05); box-shadow:0 6px 30px rgba(249,199,79,.6); }
-  .btn-secondary {
-    background:rgba(255,255,255,.08); color:#fff;
-    border:2px solid rgba(255,255,255,.2); border-radius:14px;
-    font-family:'Nunito',sans-serif; font-weight:900; font-size:1rem;
-    padding:12px 28px; cursor:pointer; transition:all .18s;
-  }
-  .btn-secondary:hover { background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.4); }
+    /* @keyframes define os passos de uma animação CSS
+       "twinkle" (piscar): alterna entre opacidade baixa e alta */
+    @keyframes twinkle {
+      0%,100% { opacity: .2; transform: scale(1);   } /* início e fim: apagada */
+      50%     { opacity: 1;  transform: scale(1.4); } /* meio: brilhante e maior */
+    }
 
-  /* ── RANKING ── */
-  .ranking-table { width:100%; border-collapse:collapse; }
-  .ranking-table th {
-    font-size:.7rem; text-transform:uppercase; letter-spacing:1px;
-    color:#888; padding:6px 10px; text-align:left;
-    border-bottom:1px solid rgba(255,255,255,.08);
-  }
-  .ranking-table td { padding:10px 10px; font-size:.95rem; border-bottom:1px solid rgba(255,255,255,.05); }
-  .ranking-table tr:first-child td { color:var(--accent); font-weight:900; }
-  .rank-pos { font-family:'Bangers',cursive; font-size:1.2rem; color:#666; width:32px; }
-  .rank-pos.gold   { color:#f9c74f; }
-  .rank-pos.silver { color:#aaa; }
-  .rank-pos.bronze { color:#cd7f32; }
-  .rank-score { font-family:'Bangers',cursive; font-size:1.3rem; color:var(--accent); text-align:right; }
-  .rank-level { font-size:.7rem; padding:2px 8px; border-radius:99px; font-weight:900; text-transform:uppercase; }
-  .rank-date  { font-size:.72rem; color:#666; }
-  .rank-highlight td { background:rgba(249,199,79,.07); }
+    /* ── WRAPPER (container central) ───────────────────
+       Envolve todo o conteúdo. max-width limita a largura
+       para não ficar esticado demais em telas grandes.
+    */
+    .wrapper {
+      position: relative; /* necessário para que z-index funcione */
+      z-index: 1;         /* fica na frente das estrelas (z-index: 0) */
+      width: 100%;
+      max-width: 500px;   /* largura máxima de 500px */
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;          /* espaço de 16px entre cada filho */
+    }
 
-  /* ── CONFETTI ── */
-  .confetti-piece {
-    position:fixed; width:8px; height:8px; border-radius:2px;
-    pointer-events:none; z-index:999;
-    animation:confetti-fall var(--dur) ease-out forwards;
-  }
-  @keyframes confetti-fall {
-    0%   { transform:translateY(-20px) rotate(0); opacity:1; }
-    100% { transform:translateY(100vh) rotate(720deg); opacity:0; }
-  }
+    /* ── TÍTULO PRINCIPAL ───────────────────────────── */
+    .title {
+      font-family: 'Bangers', cursive;
+      /* clamp(mínimo, preferido, máximo) — tamanho responsivo:
+         nunca menor que 2rem, cresce com a tela (8vw), nunca maior que 3rem */
+      font-size: clamp(2rem, 8vw, 3rem);
+      letter-spacing: 3px; /* espaço entre as letras */
+      color: var(--accent);
+      /* text-shadow: cria sombras no texto
+         Primeira sombra: brilho difuso amarelo
+         Segunda sombra: sombra sólida deslocada (efeito 3D) */
+      text-shadow: 0 0 20px rgba(249,199,79,.6), 3px 3px 0 #c77700;
+      text-align: center;
+      /* animation: nome duração função-de-tempo modo
+         "both" aplica o estado inicial antes da animação começar */
+      animation: popIn .6s cubic-bezier(.175,.885,.32,1.275) both;
+    }
 
-  .big-emoji { font-size:4rem; animation:popIn .5s both; }
-  .end-score { font-family:'Bangers',cursive; font-size:3rem; color:var(--accent); letter-spacing:2px; }
-  .btn-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
-  .empty-ranking { color:#666; font-size:.95rem; padding:20px 0; }
-  .player-chip {
-    display:inline-flex; align-items:center; gap:6px;
-    background:rgba(76,201,240,.12); border:1px solid rgba(76,201,240,.3);
-    border-radius:99px; padding:4px 14px; font-size:.85rem; font-weight:900; color:var(--blue);
-  }
-</style>
+    .subtitle {
+      font-size: .9rem; /* rem = relativo ao tamanho de fonte raiz (normalmente 16px) */
+      color: #aaa;
+      margin-top: -10px; /* margem negativa: sobe o elemento, aproximando do título */
+      animation: popIn .6s .1s both; /* .1s = delay, começa 0.1s depois */
+    }
+
+    /* Animação de entrada: elemento "nasce" do centro crescendo */
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(.7) translateY(20px); } /* invisível, pequeno, abaixo */
+      to   { opacity: 1; transform: none; }                        /* visível, tamanho normal */
+    }
+
+    /* ── HUD (painel de informações durante o jogo) ─── */
+    .hud { display: flex; gap: 12px; width: 100%; animation: popIn .5s .2s both; }
+
+    /* Cada caixinha do HUD (Questão / Pontos / Timer) */
+    .hud-box {
+      flex: 1;              /* cada box ocupa espaço igual */
+      background: var(--card);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      border: 2px solid rgba(255,255,255,.08); /* borda branca bem transparente */
+    }
+
+    .hud-label {
+      font-size: .7rem;
+      text-transform: uppercase; /* deixa o texto em MAIÚSCULAS via CSS */
+      letter-spacing: 1px;
+      color: #888;
+    }
+
+    .hud-val {
+      font-family: 'Bangers', cursive;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+      color: var(--accent);
+      transition: color .3s; /* quando a cor mudar, faz transição suave em 0.3s */
+    }
+    .hud-val.green { color: var(--green); } /* classe extra para pontuação */
+
+    /* ── BARRA DE PROGRESSO ─────────────────────────── */
+    .prog-bar {
+      width: 100%; height: 8px;
+      background: rgba(255,255,255,.1); /* trilho da barra */
+      border-radius: 99px; overflow: hidden;
+    }
+    .prog-fill {
+      height: 100%; border-radius: 99px;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      transition: width .5s ease; /* anima a mudança de largura suavemente */
+    }
+
+    /* ── CARD (painel que envolve conteúdo) ───────────── */
+    .card {
+      width: 100%; background: var(--card); border-radius: 20px;
+      border: 2px solid rgba(255,255,255,.1); padding: 28px 20px;
+      display: flex; flex-direction: column; align-items: center; gap: 20px;
+      box-shadow: 0 8px 40px rgba(0,0,0,.5); animation: popIn .4s both;
+    }
+
+    .category-badge {
+      font-size: .75rem; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 2px; padding: 4px 14px; border-radius: 99px;
+    }
+
+    /* Texto da pergunta */
+    .question {
+      font-family: 'Bangers', cursive; font-size: clamp(2rem,10vw,3.5rem);
+      letter-spacing: 2px; text-align: center; line-height: 1.15; color: #fff;
+      text-shadow: 0 0 30px rgba(76,201,240,.3);
+    }
+
+    /* ── OPÇÕES DE RESPOSTA ─────────────────────────── */
+    /* Grid de 2 colunas com as 4 opções de resposta */
+    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+
+    /* Cada botão de opção */
+    .opt {
+      background: rgba(255,255,255,.06); border: 2px solid rgba(255,255,255,.12);
+      border-radius: 14px; padding: 16px 8px;
+      font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px;
+      color: #fff; cursor: pointer; transition: all .18s; text-align: center;
+    }
+
+    /* Efeito hover — :not(:disabled) só aplica se o botão não estiver desabilitado */
+    .opt:hover:not(:disabled) {
+      background: rgba(76,201,240,.15); border-color: var(--blue);
+      transform: translateY(-2px) scale(1.03); /* sobe 2px e aumenta 3% */
+    }
+
+    /* Classe aplicada pelo JS quando acerta */
+    .opt.correct { background: rgba(67,233,123,.2); border-color: var(--green); color: var(--green); animation: shake-correct .4s; }
+    /* Classe aplicada pelo JS quando erra */
+    .opt.wrong   { background: rgba(247,37,133,.15); border-color: var(--red);   color: var(--red);   animation: shake .4s; }
+
+    @keyframes shake         { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+    @keyframes shake-correct { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+
+    .feedback { font-size: 1.1rem; font-weight: 900; text-align: center; min-height: 28px; }
+    .feedback.ok   { color: var(--green); }
+    .feedback.fail { color: var(--red); }
+
+    /* ── TIMER CIRCULAR ─────────────────────────────────
+       Usa SVG (gráfico vetorial) para desenhar um círculo.
+       stroke-dasharray e stroke-dashoffset controlam quanto
+       do contorno do círculo fica visível.
+    */
+    .timer-ring { position: relative; width: 60px; height: 60px; }
+    .timer-ring svg { transform: rotate(-90deg); } /* gira para o progresso começar do topo */
+    .timer-ring circle { fill: none; stroke-width: 5; }
+    .timer-ring .bg { stroke: rgba(255,255,255,.1); }    /* trilho de fundo */
+    .timer-ring .fg {
+      stroke: var(--blue); stroke-linecap: round;
+      stroke-dasharray: 163;     /* circunferência ≈ 2 × π × 26 */
+      /* stroke-dashoffset: 0 = cheio, 163 = vazio */
+      transition: stroke-dashoffset .9s linear, stroke .3s;
+    }
+    .timer-val {
+      position: absolute; inset: 0; display: flex;
+      align-items: center; justify-content: center;
+      font-family: 'Bangers', cursive; font-size: 1.3rem;
+    }
+
+    /* ── TELAS GENÉRICAS ─────────────────────────────── */
+    .screen { display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; animation: popIn .5s both; width: 100%; }
+
+    /* ── CAMPO DE TEXTO (nome do jogador) ───────────── */
+    .name-input {
+      width: 100%; max-width: 320px; padding: 14px 18px;
+      background: rgba(255,255,255,.07); border: 2px solid rgba(255,255,255,.2);
+      border-radius: 14px; font-family: 'Nunito', sans-serif; font-weight: 900;
+      font-size: 1.2rem; color: #fff; text-align: center;
+      outline: none; /* remove o contorno azul padrão do navegador */
+      transition: border-color .2s;
+    }
+    .name-input:focus { border-color: var(--blue); } /* muda borda ao focar */
+    .name-input::placeholder { color: #666; font-weight: 700; }
+
+    /* ── BOTÕES DE NÍVEL ─────────────────────────────── */
+    .level-btn {
+      width: 280px; padding: 14px 20px; border-radius: 14px; border: none;
+      font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1rem;
+      cursor: pointer; transition: all .18s; display: flex; flex-direction: column; gap: 2px;
+    }
+    .level-btn:hover { transform: scale(1.04); }
+    .level-btn .lname { font-size: 1.1rem; }
+    .level-btn .ldesc { font-size: .78rem; opacity: .75; font-weight: 700; }
+
+    /* ── BOTÃO PRINCIPAL (dourado) ───────────────────── */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #f4a261); color: #1a1a1a;
+      border: none; border-radius: 14px;
+      font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.1rem;
+      padding: 14px 36px; cursor: pointer; transition: all .18s;
+      box-shadow: 0 4px 20px rgba(249,199,79,.4);
+    }
+    .btn-primary:hover { transform: scale(1.05); box-shadow: 0 6px 30px rgba(249,199,79,.6); }
+
+    /* ── BOTÃO SECUNDÁRIO (transparente com borda) ───── */
+    .btn-secondary {
+      background: rgba(255,255,255,.08); color: #fff;
+      border: 2px solid rgba(255,255,255,.2); border-radius: 14px;
+      font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1rem;
+      padding: 12px 28px; cursor: pointer; transition: all .18s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.4); }
+
+    /* ── TABELA DE RANKING ───────────────────────────── */
+    .ranking-table { width: 100%; border-collapse: collapse; }
+    .ranking-table th {
+      font-size: .7rem; text-transform: uppercase; letter-spacing: 1px;
+      color: #888; padding: 6px 10px; text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .ranking-table td { padding: 10px 10px; font-size: .95rem; border-bottom: 1px solid rgba(255,255,255,.05); }
+    .rank-pos { font-family: 'Bangers', cursive; font-size: 1.2rem; color: #666; width: 32px; }
+    .rank-pos.gold   { color: #f9c74f; } /* 1º lugar */
+    .rank-pos.silver { color: #aaa;    } /* 2º lugar */
+    .rank-pos.bronze { color: #cd7f32; } /* 3º lugar */
+    .rank-score { font-family: 'Bangers', cursive; font-size: 1.3rem; color: var(--accent); text-align: right; }
+    .rank-level { font-size: .7rem; padding: 2px 8px; border-radius: 99px; font-weight: 900; text-transform: uppercase; }
+    .rank-date  { font-size: .72rem; color: #666; }
+    .rank-highlight td { background: rgba(249,199,79,.07); } /* destaca linha do jogador atual */
+
+    /* ── CONFETE ─────────────────────────────────────── */
+    .confetti-piece {
+      position: fixed; width: 8px; height: 8px; border-radius: 2px;
+      pointer-events: none; z-index: 999;
+      animation: confetti-fall var(--dur) ease-out forwards;
+    }
+    @keyframes confetti-fall {
+      0%   { transform: translateY(-20px) rotate(0);      opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+      /* 100vh = altura total da tela; sai pelo rodapé */
+    }
+
+    /* ── TELA FINAL ──────────────────────────────────── */
+    .big-emoji { font-size: 4rem; animation: popIn .5s both; }
+    .end-score { font-family: 'Bangers', cursive; font-size: 3rem; color: var(--accent); letter-spacing: 2px; }
+    .btn-row   { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .empty-ranking { color: #666; font-size: .95rem; padding: 20px 0; }
+
+    /* Chizinho com o nome do jogador */
+    .player-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(76,201,240,.12); border: 1px solid rgba(76,201,240,.3);
+      border-radius: 99px; padding: 4px 14px; font-size: .85rem; font-weight: 900; color: var(--blue);
+    }
+
+  </style>
 </head>
+
 <body>
 
-<div class="stars" id="stars"></div>
-<div class="wrapper" id="app"></div>
+  <!-- DIV das estrelas: começa vazia, o JavaScript insere as estrelas aqui -->
+  <div class="stars" id="stars"></div>
 
-<script>
-// ══════════════════════════════════════════════════════
-//  CONFIG
-// ══════════════════════════════════════════════════════
-const LEVELS = [
-  { id:'easy',   name:'🟢 Fácil',   desc:'Adição e Subtração',        color:'#43e97b', bg:'rgba(67,233,123,.15)',  ops:['+','-'],    range:[1,20],  time:20 },
-  { id:'medium', name:'🟡 Médio',   desc:'Multiplicação e Divisão',   color:'#f9c74f', bg:'rgba(249,199,79,.15)',  ops:['×','÷'],    range:[2,9],   time:18 },
-  { id:'hard',   name:'🔴 Difícil', desc:'Misturão Total',            color:'#f72585', bg:'rgba(247,37,133,.15)', ops:['+','-','×'], range:[1,50],  time:15 },
-  { id:'expert', name:'🟣 Expert',  desc:'Expressões com Parênteses', color:'#a855f7', bg:'rgba(168,85,247,.15)', ops:['paren'],     range:[1,15],  time:25 },
-];
-const TOTAL_QUESTIONS = 10;
-const RANKING_KEY     = 'missaomat_ranking_v2';
-const MAX_RANKING     = 20;
+  <!--
+    WRAPPER PRINCIPAL — id="app"
+    Todo o conteúdo visível (as telas do jogo) é injetado aqui pelo JavaScript.
+    Começa completamente vazio — o JS preenche ao carregar a página.
+  -->
+  <div class="wrapper" id="app"></div>
 
-// ══════════════════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════════════════
-let state = {
-  screen:'name', player:'',
-  level:null, q:0, score:0, correct:0,
-  timer:0, timerInt:null, current:null
-};
 
-// ══════════════════════════════════════════════════════
-//  RANKING (localStorage)
-// ══════════════════════════════════════════════════════
-function loadRanking(){
-  try { return JSON.parse(localStorage.getItem(RANKING_KEY)) || []; }
-  catch(e){ return []; }
-}
-function saveRanking(entry){
-  let r = loadRanking();
-  r.push(entry);
-  r.sort((a,b)=>b.score-a.score);
-  r = r.slice(0, MAX_RANKING);
-  localStorage.setItem(RANKING_KEY, JSON.stringify(r));
-  return r;
-}
-function clearRanking(){
-  localStorage.removeItem(RANKING_KEY);
-}
+  <script>
+    /*
+    ════════════════════════════════════════════════════════════
+      JAVASCRIPT — A LÓGICA DO JOGO
+      JavaScript é a linguagem de programação do navegador.
+      Ela manipula o HTML, responde a cliques, calcula,
+      armazena dados e controla o fluxo do programa.
 
-// ══════════════════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════════════════
-function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
-function shuffle(a){ return [...a].sort(()=>Math.random()-.5); }
-function fmtDate(ts){
-  const d=new Date(ts);
-  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'})
-        +' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-}
-function levelLabel(id){
-  return { easy:'Fácil', medium:'Médio', hard:'Difícil', expert:'Expert' }[id]||id;
-}
-function levelColor(id){
-  return { easy:'#43e97b', medium:'#f9c74f', hard:'#f72585', expert:'#a855f7' }[id]||'#aaa';
-}
-function medalOf(i){ return i===0?'gold':i===1?'silver':i===2?'bronze':''; }
-function medalEmoji(i){ return ['🥇','🥈','🥉'][i]||`${i+1}º`; }
+      Comentários em JS:
+        // linha única
+        /* bloco de múltiplas linhas * /
+    ════════════════════════════════════════════════════════════
+    */
 
-// ══════════════════════════════════════════════════════
-//  QUESTION GENERATORS
-// ══════════════════════════════════════════════════════
-function genParenQuestion(){
-  const pattern=rand(1,6);
-  let text,ans,category;
-  if(pattern===1){ const a=rand(1,10),b=rand(1,10),c=rand(2,9); ans=(a+b)*c; text=`(${a}+${b}) × ${c} = ?`; category='(+)×c'; }
-  else if(pattern===2){ const b=rand(1,8),a=rand(b+1,15),c=rand(2,9); ans=(a-b)*c; text=`(${a}-${b}) × ${c} = ?`; category='(-)×c'; }
-  else if(pattern===3){ const a=rand(2,9),b=rand(1,10),c=rand(1,10); ans=a*(b+c); text=`${a} × (${b}+${c}) = ?`; category='a×(+)'; }
-  else if(pattern===4){ const a=rand(1,20),b=rand(2,9),c=rand(2,9); ans=a+(b*c); text=`${a} + (${b}×${c}) = ?`; category='a+(×)'; }
-  else if(pattern===5){ const a=rand(1,8),b=rand(1,8),c=rand(1,5),d=rand(1,5); ans=(a+b)*(c+d); text=`(${a}+${b})×(${c}+${d}) = ?`; category='(+)×(+)'; }
-  else { const c=rand(1,8),d=rand(1,8),a=rand(2,9),b=rand(2,9); ans=a*b-(c+d); text=`${a}×${b}-(${c}+${d}) = ?`; category='a×b-(+)'; }
-  const wrongs=new Set();
-  while(wrongs.size<3){ const w=ans+rand(-8,8)*rand(1,4); if(w!==ans&&w>0) wrongs.add(w); }
-  return { text, ans, choices:shuffle([ans,...wrongs]), category:'🔵 '+category, isParen:true };
-}
 
-function genQuestion(level){
-  if(level.ops[0]==='paren') return genParenQuestion();
-  const op=level.ops[rand(0,level.ops.length-1)];
-  let a,b,ans;
-  if(op==='+'){  a=rand(level.range[0],level.range[1]); b=rand(level.range[0],level.range[1]); ans=a+b; }
-  if(op==='-'){  a=rand(level.range[0],level.range[1]); b=rand(0,a); ans=a-b; }
-  if(op==='×'){  a=rand(2,level.range[1]); b=rand(2,level.range[1]); ans=a*b; }
-  if(op==='÷'){  b=rand(2,level.range[1]); ans=rand(2,level.range[1]); a=b*ans; }
-  const wrongs=new Set();
-  while(wrongs.size<3){ const w=ans+rand(-5,5)*rand(1,3); if(w!==ans&&w>=0) wrongs.add(w); }
-  return { text:`${a} ${op} ${b} = ?`, ans, choices:shuffle([ans,...wrongs]),
-           category:{ '+':'Adição', '-':'Subtração', '×':'Multiplicação', '÷':'Divisão' }[op] };
-}
+    // ══════════════════════════════════════════════════════
+    //  SEÇÃO 1 — CONFIGURAÇÕES DO JOGO
+    //  "const" declara variável imutável (não pode ser alterada).
+    // ══════════════════════════════════════════════════════
 
-// ══════════════════════════════════════════════════════
-//  STARS
-// ══════════════════════════════════════════════════════
-(function(){
-  const c=document.getElementById('stars');
-  for(let i=0;i<80;i++){
-    const s=document.createElement('div'); s.className='star';
-    const sz=Math.random()*2.5+.5;
-    s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${(Math.random()*3+1).toFixed(1)}s;animation-delay:${(Math.random()*3).toFixed(1)}s`;
-    c.appendChild(s);
-  }
-})();
+    // LEVELS é um Array (lista) de objetos.
+    // Cada objeto { } representa um nível com suas propriedades.
+    const LEVELS = [
+      {
+        id:    'easy',          // identificador único (usado internamente)
+        name:  '🟢 Fácil',     // nome exibido na tela
+        desc:  'Adição e Subtração',
+        color: '#43e97b',       // cor associada ao nível
+        bg:    'rgba(67,233,123,.15)', // fundo semi-transparente
+        ops:   ['+', '-'],      // operações disponíveis neste nível
+        range: [1, 20],         // números gerados entre 1 e 20
+        time:  20               // segundos por questão
+      },
+      { id:'medium', name:'🟡 Médio',   desc:'Multiplicação e Divisão',   color:'#f9c74f', bg:'rgba(249,199,79,.15)',  ops:['×','÷'],    range:[2,9],  time:18 },
+      { id:'hard',   name:'🔴 Difícil', desc:'Misturão Total',            color:'#f72585', bg:'rgba(247,37,133,.15)', ops:['+','-','×'], range:[1,50], time:15 },
+      { id:'expert', name:'🟣 Expert',  desc:'Expressões com Parênteses', color:'#a855f7', bg:'rgba(168,85,247,.15)', ops:['paren'],     range:[1,15], time:25 },
+      // 'paren' é um código especial — a função genQuestion detecta e chama genParenQuestion()
+    ];
 
-// ══════════════════════════════════════════════════════
-//  CONFETTI
-// ══════════════════════════════════════════════════════
-function confetti(){
-  const colors=['#f9c74f','#43e97b','#4cc9f0','#a855f7','#f72585','#fff'];
-  for(let i=0;i<70;i++){
-    const el=document.createElement('div'); el.className='confetti-piece';
-    el.style.cssText=`left:${Math.random()*100}vw;background:${colors[rand(0,colors.length-1)]};--dur:${(Math.random()*1.5+.8).toFixed(2)}s;animation-delay:${(Math.random()*.6).toFixed(2)}s`;
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(),2600);
-  }
-}
+    const TOTAL_QUESTIONS = 10;                    // total de questões por partida
+    const RANKING_KEY     = 'missaomat_ranking_v2';// chave usada para salvar no localStorage
+    const MAX_RANKING     = 20;                    // máximo de entradas no ranking
 
-// ══════════════════════════════════════════════════════
-//  TIMER
-// ══════════════════════════════════════════════════════
-function startTimer(seconds,onTick,onEnd){
-  clearInterval(state.timerInt);
-  state.timer=seconds; onTick(seconds,seconds);
-  state.timerInt=setInterval(()=>{
-    state.timer--;
-    onTick(state.timer,seconds);
-    if(state.timer<=0){ clearInterval(state.timerInt); onEnd(); }
-  },1000);
-}
 
-// ══════════════════════════════════════════════════════
-//  RENDER ENGINE
-// ══════════════════════════════════════════════════════
-const app=document.getElementById('app');
-function render(){
-  if(state.screen==='name')    renderName();
-  else if(state.screen==='level')   renderLevel();
-  else if(state.screen==='game')    renderGame();
-  else if(state.screen==='end')     renderEnd();
-  else if(state.screen==='ranking') renderRanking();
-}
+    // ══════════════════════════════════════════════════════
+    //  SEÇÃO 2 — ESTADO DO JOGO (State)
+    //  "state" guarda tudo que pode mudar durante o jogo.
+    //  É a "memória de trabalho" do programa.
+    //  "let" declara variável mutável (pode ser alterada depois).
+    // ══════════════════════════════════════════════════════
+    let state = {
+      screen:   'name',  // qual tela está ativa agora
+      player:   '',      // nome digitado pelo jogador
+      level:    null,    // objeto do nível escolhido (null = nenhum ainda)
+      q:        0,       // número da questão atual (começa em 0)
+      score:    0,       // pontuação acumulada
+      correct:  0,       // quantidade de acertos
+      timer:    0,       // segundos restantes no timer atual
+      timerInt: null,    // referência ao setInterval (para poder cancelar)
+      current:  null,    // objeto da questão atual
+    };
 
-// ── TELA 1: NOME ──────────────────────────────────────
-function renderName(){
-  app.innerHTML=`
-    <div class="title">🚀 Missão<br>Matemática</div>
-    <div class="subtitle">O jogo de contas mais épico da galáxia!</div>
-    <div class="screen">
-      <div class="card" style="gap:18px;padding:28px 24px;max-width:340px">
-        <div style="font-size:2rem">👾</div>
-        <div style="font-weight:900;font-size:1.1rem">Qual é o seu nome, astronauta?</div>
-        <input id="nameInput" class="name-input" maxlength="20"
-          placeholder="Digite seu nome..." autocomplete="off"
-          onkeydown="if(event.key==='Enter') confirmName()"
-          value="${state.player}">
-        <button class="btn-primary" onclick="confirmName()" style="width:100%">Entrar na Missão 🚀</button>
-      </div>
-      ${loadRanking().length>0?`
-        <button class="btn-secondary" onclick="goScreen('ranking')">🏆 Ver Ranking</button>
-      `:''}
-    </div>`;
-  setTimeout(()=>{ const el=document.getElementById('nameInput'); if(el) el.focus(); },100);
-}
 
-// ── TELA 2: NÍVEL ─────────────────────────────────────
-function renderLevel(){
-  app.innerHTML=`
-    <div class="title">🚀 Missão<br>Matemática</div>
-    <div class="player-chip">👾 ${state.player}</div>
-    <div class="screen">
-      <div style="font-weight:900;font-size:1rem;color:#aaa">Escolha a dificuldade:</div>
-      ${LEVELS.map(l=>`
-        <button class="level-btn" onclick="startGame('${l.id}')"
-          style="background:${l.bg};border:2px solid ${l.color};color:#fff">
-          <span class="lname">${l.name}</span>
-          <span class="ldesc">${l.desc} · ⏱ ${l.time}s por questão</span>
-        </button>
-      `).join('')}
-      <div class="btn-row" style="margin-top:4px">
-        <button class="btn-secondary" onclick="goScreen('name')">← Trocar Nome</button>
-        ${loadRanking().length>0?`<button class="btn-secondary" onclick="goScreen('ranking')">🏆 Ranking</button>`:''}
-      </div>
-    </div>`;
-}
+    // ══════════════════════════════════════════════════════
+    //  SEÇÃO 3 — RANKING (localStorage)
+    //  Funções para salvar/carregar o ranking no navegador.
+    // ══════════════════════════════════════════════════════
 
-// ── TELA 3: JOGO ──────────────────────────────────────
-function renderGame(){
-  const lvl=state.level, q=state.current;
-  const progPct=(state.q/TOTAL_QUESTIONS)*100;
-  const catColor={ 'Adição':lvl.color,'Subtração':'#4cc9f0','Multiplicação':'#a855f7','Divisão':'#f9c74f' }[q.category]||lvl.color;
-
-  app.innerHTML=`
-    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px">
-      <div class="title" style="font-size:1.4rem;margin:0">🚀 Missão Mat.</div>
-      <div class="player-chip">👾 ${state.player}</div>
-    </div>
-
-    <div class="hud">
-      <div class="hud-box">
-        <div class="hud-label">Questão</div>
-        <div class="hud-val">${state.q+1}<span style="font-size:.9rem;color:#555">/${TOTAL_QUESTIONS}</span></div>
-      </div>
-      <div class="hud-box">
-        <div class="hud-label">Pontos</div>
-        <div class="hud-val green" id="scoreVal">${state.score}</div>
-      </div>
-      <div class="hud-box" style="flex:0 0 72px">
-        <div class="timer-ring">
-          <svg width="60" height="60" viewBox="0 0 60 60">
-            <circle class="bg" cx="30" cy="30" r="26"/>
-            <circle class="fg" id="timerArc" cx="30" cy="30" r="26" stroke-dashoffset="0"/>
-          </svg>
-          <div class="timer-val" id="timerVal">${lvl.time}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="prog-bar"><div class="prog-fill" style="width:${progPct}%"></div></div>
-
-    <div class="card" id="qcard">
-      <span class="category-badge" style="background:${catColor}22;color:${catColor};border:1px solid ${catColor}40">${q.category}</span>
-      <div class="question" style="font-size:${q.isParen?'clamp(1.3rem,6vw,2.2rem)':'clamp(2rem,10vw,3.5rem)'}">${q.text}</div>
-      <div class="options" id="opts">
-        ${q.choices.map(c=>`<button class="opt" onclick="answer(${c},this)">${c}</button>`).join('')}
-      </div>
-      <div class="feedback" id="fb"></div>
-    </div>`;
-
-  const circ=2*Math.PI*26;
-  startTimer(lvl.time,
-    (t,total)=>{
-      const el=document.getElementById('timerVal'), arc=document.getElementById('timerArc');
-      if(el) el.textContent=t;
-      if(arc){ arc.style.strokeDashoffset=circ*(1-t/total); arc.style.stroke=t<=5?'#f72585':t<=8?'#f9c74f':'#4cc9f0'; }
-    },
-    ()=>timeOut()
-  );
-}
-
-// ── TELA 4: FIM ───────────────────────────────────────
-function renderEnd(){
-  clearInterval(state.timerInt);
-  const pct=Math.round(state.correct/TOTAL_QUESTIONS*100);
-  const emoji=pct>=90?'🏆':pct>=60?'⭐':'💪';
-  const msg=pct>=90?`Incrível, ${state.player}!`:pct>=60?`Muito bem, ${state.player}!`:`Continue tentando, ${state.player}!`;
-  const sub=pct>=90?'Você é um gênio da matemática!':pct>=60?'Ótimo desempenho!':'A prática leva à perfeição!';
-  if(pct>=60) confetti();
-
-  // Salva no ranking
-  const entry={ name:state.player, score:state.score, correct:state.correct, level:state.level.id, ts:Date.now() };
-  const ranking=saveRanking(entry);
-  const myPos=ranking.findIndex(r=>r.ts===entry.ts);
-
-  app.innerHTML=`
-    <div class="screen">
-      <div class="big-emoji">${emoji}</div>
-      <div class="title" style="font-size:2rem">${msg}</div>
-      <div class="subtitle">${sub}</div>
-      <div class="card" style="gap:14px;padding:24px">
-        <div style="font-size:.8rem;color:#888;text-transform:uppercase;letter-spacing:1px">Resultado Final</div>
-        <div class="end-score">${state.score} pts</div>
-        <div style="color:#aaa;font-size:.9rem">
-          ✅ ${state.correct} certas &nbsp;|&nbsp;
-          ❌ ${TOTAL_QUESTIONS-state.correct} erradas &nbsp;|&nbsp;
-          🎯 ${pct}%
-        </div>
-        ${myPos>=0?`
-          <div style="margin-top:4px;font-size:.88rem;color:${levelColor(state.level.id)};font-weight:900">
-            ${myPos===0?'🥇 Novo recorde! 1º lugar!':myPos===1?'🥈 2º lugar no ranking!':myPos===2?'🥉 3º lugar no ranking!':`📊 ${myPos+1}º lugar no ranking`}
-          </div>`:''}
-      </div>
-      <div class="btn-row">
-        <button class="btn-primary" onclick="startGame('${state.level.id}')">🔄 Jogar de Novo</button>
-        <button class="btn-secondary" onclick="goScreen('level')">🎮 Mudar Nível</button>
-      </div>
-      <button class="btn-secondary" onclick="goScreen('ranking')" style="width:200px">🏆 Ver Ranking</button>
-    </div>`;
-}
-
-// ── TELA 5: RANKING ───────────────────────────────────
-function renderRanking(){
-  const ranking=loadRanking();
-  app.innerHTML=`
-    <div class="title" style="font-size:2rem">🏆 Ranking</div>
-    <div class="subtitle">As maiores pontuações da galáxia</div>
-    <div class="card" style="padding:16px 12px;gap:0">
-      ${ranking.length===0
-        ? `<div class="empty-ranking">Nenhuma pontuação ainda.<br>Seja o primeiro! 🚀</div>`
-        : `<table class="ranking-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Jogador</th>
-                <th>Nível</th>
-                <th style="text-align:right">Pts</th>
-                <th>Data</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${ranking.map((r,i)=>`
-                <tr class="${r.name===state.player?'rank-highlight':''}">
-                  <td class="rank-pos ${medalOf(i)}">${medalEmoji(i)}</td>
-                  <td style="font-weight:900">${r.name}</td>
-                  <td><span class="rank-level" style="background:${levelColor(r.level)}22;color:${levelColor(r.level)}">${levelLabel(r.level)}</span></td>
-                  <td class="rank-score">${r.score}</td>
-                  <td class="rank-date">${fmtDate(r.ts)}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>`
+    // Carrega o ranking salvo no localStorage
+    function loadRanking() {
+      try {
+        // localStorage.getItem() retorna uma string ou null
+        // JSON.parse() converte a string de volta para um Array de objetos
+        // Se não existir nada, retorna um array vazio []
+        return JSON.parse(localStorage.getItem(RANKING_KEY)) || [];
+      } catch(e) {
+        return []; // se der erro (dado corrompido), retorna lista vazia
       }
-    </div>
-    <div class="btn-row">
-      <button class="btn-primary" onclick="goScreen('level')">🎮 Jogar</button>
-      <button class="btn-secondary" onclick="goScreen('name')">👾 Trocar Nome</button>
-    </div>
-    ${ranking.length>0?`
-      <button onclick="if(confirm('Apagar todo o ranking?')){clearRanking();renderRanking();}"
-        style="background:none;border:none;color:#555;font-size:.8rem;cursor:pointer;font-family:Nunito,sans-serif;font-weight:700;margin-top:-8px">
-        🗑 Apagar ranking
-      </button>`:''}`;
-}
+    }
 
-// ══════════════════════════════════════════════════════
-//  ACTIONS
-// ══════════════════════════════════════════════════════
-function confirmName(){
-  const val=(document.getElementById('nameInput')?.value||'').trim();
-  if(!val){ document.getElementById('nameInput')?.focus(); return; }
-  state.player=val;
-  state.screen='level';
-  render();
-}
+    // Salva uma nova entrada no ranking e retorna o ranking atualizado
+    function saveRanking(entry) {
+      let r = loadRanking();           // carrega o ranking atual
+      r.push(entry);                   // adiciona a nova entrada no final da lista
 
-function goScreen(s){ clearInterval(state.timerInt); state.screen=s; render(); }
+      // .sort() ordena o array
+      // A função comparadora (a, b) => b.score - a.score define a ordem:
+      // se resultado for negativo → a vem antes; positivo → b vem antes
+      // b.score - a.score → maior score primeiro (ordem decrescente)
+      r.sort((a, b) => b.score - a.score);
 
-function startGame(levelId){
-  clearInterval(state.timerInt);
-  state.level  =LEVELS.find(l=>l.id===levelId);
-  state.q      =0; state.score=0; state.correct=0;
-  state.screen ='game';
-  state.current=genQuestion(state.level);
-  render();
-}
+      r = r.slice(0, MAX_RANKING);     // .slice() mantém só os primeiros 20
+      // JSON.stringify() converte o Array para string de texto para salvar
+      localStorage.setItem(RANKING_KEY, JSON.stringify(r));
+      return r;                         // retorna o ranking já atualizado
+    }
 
-function answer(val,btn){
-  clearInterval(state.timerInt);
-  const opts=document.querySelectorAll('.opt');
-  opts.forEach(o=>o.disabled=true);
-  const fb=document.getElementById('fb');
-  const isCorrect=val===state.current.ans;
-  if(isCorrect){
-    btn.classList.add('correct');
-    state.score+=10+state.timer; state.correct++;
-    document.getElementById('scoreVal').textContent=state.score;
-    fb.className='feedback ok'; fb.textContent=`✅ Correto! +${10+state.timer} pts`;
-  } else {
-    btn.classList.add('wrong');
-    opts.forEach(o=>{ if(Number(o.textContent)===state.current.ans) o.classList.add('correct'); });
-    fb.className='feedback fail'; fb.textContent=`❌ Era ${state.current.ans}`;
-  }
-  setTimeout(nextQ,1200);
-}
+    // Apaga o ranking completamente do localStorage
+    function clearRanking() {
+      localStorage.removeItem(RANKING_KEY);
+    }
 
-function timeOut(){
-  const opts=document.querySelectorAll('.opt');
-  opts.forEach(o=>o.disabled=true);
-  opts.forEach(o=>{ if(Number(o.textContent)===state.current.ans) o.classList.add('correct'); });
-  const fb=document.getElementById('fb');
-  if(fb){ fb.className='feedback fail'; fb.textContent=`⏰ Tempo! Era ${state.current.ans}`; }
-  setTimeout(nextQ,1300);
-}
 
-function nextQ(){
-  state.q++;
-  if(state.q>=TOTAL_QUESTIONS){ state.screen='end'; render(); return; }
-  state.current=genQuestion(state.level);
-  renderGame();
-}
+    // ══════════════════════════════════════════════════════
+    //  SEÇÃO 4 — FUNÇÕES AUXILIARES (Helpers)
+    //  Pequenas funções reutilizáveis em vários lugares.
+    // ══════════════════════════════════════════════════════
 
-// ══════════════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════════════
-render();
-</script>
+    // Gera número inteiro aleatório entre a e b (inclusive nos dois extremos)
+    // Math.random() → decimal entre 0 e 1 (ex: 0.742)
+    // Math.floor()  → arredonda para baixo (ex: 3.9 → 3)
+    function rand(a, b) {
+      return Math.floor(Math.random() * (b - a + 1)) + a;
+    }
+
+    // Embaralha um array — cria uma cópia embaralhada sem modificar o original
+    // [...a] usa spread operator para copiar todos os elementos
+    // .sort(() => Math.random() - .5) → comparador aleatório (às vezes positivo, às vezes negativo)
+    function shuffle(a) {
+      return [...a].sort(() => Math.random() - .5);
+    }
+
+    // Formata timestamp (ms desde 1970) para "dd/mm/aa hh:mm"
+    function fmtDate(ts) {
+      const d = new Date(ts); // cria objeto Date a partir do timestamp
+      return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'2-digit' })
+           + ' ' + d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+    }
+
+    // Converte o id do nível para texto legível
+    function levelLabel(id) {
+      // Objeto usado como dicionário — busca pelo id como chave
+      return { easy:'Fácil', medium:'Médio', hard:'Difícil', expert:'Expert' }[id] || id;
+    }
+
+    // Retorna a cor associada ao id do nível
+    function levelColor(id) {
+      return { easy:'#43e97b', medium:'#f9c74f', hard:'#f72585', expert:'#a855f7' }[id] || '#aaa';
+    }
+
+    // Retorna a classe CSS de medalha conforme a posição no ranking
+    function medalOf(i) {
+      // Operador ternário aninhado: condição ? valor_true : valor_false
+      return i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+    }
+
+    // Retorna o emoji de medalha conforme a posição
+    function medalEmoji(i) {
+      // Tenta pegar do array; se i > 2, usa template literal para "4º", "5º", etc.
+      return ['🥇','🥈','🥉'][i] || `${i+1}º`;
+    }
+
+
+    // ══════════════════════════════════════════════════════
+    //  SEÇÃO 5 — GERADORES DE QUESTÕES
+    //  Criam objetos com texto, resposta correta e 4 opções.
+    // ══════════════════════════════════════════════════════
+
+    // Gera questões com expressões entre parênteses (nível Expert)
+    function genParenQuestion() {
+      const pattern = rand(1, 6); // escolhe um dos 6 padrões aleatoriamente
+      let text, ans, category;
+
+      if (pattern === 1) {
+        // Padrão: (a + b) × c
+        const a = rand(1,10), b = rand(1,10), c = rand(2,9);
+        ans      = (a + b) * c;                  // calcula a resposta correta
+        text     = `(${a} + ${b}) × ${c} = ?`;  // monta o texto da pergunta
+        category = '(+)×c';
+      } else if (pattern === 2) {
+        // Padrão: (a - b) × c — garante a > b para resultado positivo
+        const b = rand(1,8), a = rand(b+1,15), c = rand(2,9);
+        ans = (a - b) * c; text = `(${a} - ${b}) × ${c} = ?`; category = '(-)×c';
+      } else if (pattern === 3) {
+        // Padrão: a × (b + c)
+        const a = rand(2,9), b = rand(1,10), c = rand(1,10);
+        ans = a * (b + c); text = `${a} × (${b} + ${c}) = ?`; category = 'a×(+)';
+      } else if (pattern === 4) {
+        // Padrão: a + (b × c)
+        const a = rand(1,20), b = rand(2,9), c = rand(2,9);
+        ans = a + (b * c); text = `${a} + (${b} × ${c}) = ?`; category = 'a+(×)';
+      } else if (pattern === 5) {
+        // Padrão: (a + b) × (c + d)
+        const a = rand(1,8), b = rand(1,8), c = rand(1,5), d = rand(1,5);
+        ans = (a + b) * (c + d); text = `(${a}+${b}) × (${c}+${d}) = ?`; category = '(+)×(+)';
+      } else {
+        // Padrão: a × b - (c + d)
+        const c = rand(1,8), d = rand(1,8), a = rand(2,9), b = rand(2,9);
+        ans = a * b - (c + d); text = `${a}×${b} - (${c}+${d}) = ?`; category = 'a×b-(+)';
+      }
+
+      // Gera 3 respostas erradas, diferentes da correta e positivas
+      // Set é uma estrutura que não aceita valores duplicados
+      const wrongs = new Set();
+      while (wrongs.size < 3) {
+        const w = ans + rand(-8, 8) * rand(1, 4); // varia em torno da resposta certa
+        if (w !== ans && w > 0) wrongs.add(w);
+      }
+
+      // Retorna o objeto completo da questão
+      return {
+        text,                               // texto da pergunta
+        ans,                                // resposta correta (número)
+        choices: shuffle([ans, ...wrongs]), // 4 opções embaralhadas (spread ...wrongs converte Set em array)
+        category: '🔵 ' + category,         // categoria para o badge colorido
+        isParen: true                       // flag para reduzir o tamanho da fonte no display
+      };
+    }
+
+    // Gera questões para os níveis Fácil, Médio e Difícil
+    function genQuestion(level) {
+      // Se o nível for Expert, delega para a função específica de parênteses
+      if (level.ops[0] === 'paren') return genParenQuestion();
+
+      // Escolhe uma operação aleatória da lista de ops do nível
+      // rand(0, length-1) garante que o índice é válido
+      const op = level.ops[rand(0, level.ops.length - 1)];
+      let a, b, ans;
+
+      if (op === '+') {
+        a = rand(level.range[0], level.range[1]);
+        b = rand(level.range[0], level.range[1]);
+        ans = a + b;
+      }
+      if (op === '-') {
+        a = rand(level.range[0], level.range[1]);
+        b = rand(0, a); // b sempre ≤ a para evitar resultado negativo
+        ans = a - b;
+      }
+      if (op === '×') {
+        a = rand(2, level.range[1]);
+        b = rand(2, level.range[1]);
+        ans = a * b;
+      }
+      if (op === '÷') {
+        // Garante divisão exata: gera o resultado primeiro, depois deriva o dividendo
+        b   = rand(2, level.range[1]);
+        ans = rand(2, level.range[1]);
+        a   = b * ans; // a ÷ b = ans → a é sempre divisível por b exatamente
+      }
+
+      // Gera 3 respostas erradas próximas da correta
+      const wrongs = new Set();
+      while (wrongs.size < 3) {
+        const w = ans + rand(-5, 5) * rand(1, 3);
+        if (w !== ans && w >= 0) wrongs.add(w);
+      }
+
+      return {
+        text: `${a} ${op} ${b} = ?`,
+        ans,
+        choices: shuffle([ans, ...wrongs]),
+        // Objeto usado como dicionário para mapear símbolo → nome da operação
+        category: { '+':'Adição', '-':'Subtração', '×':'Multiplicação', '÷':'Divisão' }[op]
+      };
+    }
+
+
+    // ══════════════════════════════════════════════════════
+    //  SEÇÃO 6 — CRIAÇÃO DAS ESTRELAS
+    //  IIFE (Immediately Invoked Function Expression):
+    //  função que se executa sozinha assim que é definida.
+    //  Sintaxe: (function() { ... })()
+    // ══════════════════════════════════════════════════════
+    (function() {
+      const container = document.getElementById('stars');
+      for (let i = 0; i < 80; i++) {                // cria 80 estrelas
+        const s = document.createElement('div');     // cria um <div> em memória
+        s.className = 'star';                        // aplica a classe CSS
+
+        const sz = Math.random() * 2.5 + 0.5;       // tamanho aleatório: 0.5px a 3px
+        // style.cssText define múltiplos estilos em uma string
+        // --d é uma variável CSS customizada usada na animação twinkle
+        s.style.cssText = `
+          width:${sz}px; height:${sz}px;
+          top:${Math.random() * 100}%;
+          left:${Math.random() * 100}%;
+          --d:${(Math.random() * 3 + 1).toFixed(1)}s;
+          animation-delay:${(Math.random() * 3).toFixed(1)}s
+        `;
+        container.appendChild(s); // insere a estrela no DOM (na página)
+      }
+    })(); // os () finais disparam a função imediatamente
+
+
+    // ══════════════════════════════════════════════════════
+    //  SEÇÃO 7 — CONFETE (celebração visual)
+    // ══════════════════════════════════════════════════════
+    function confetti() {
+      const colors = ['#f9c74f','#43e97b','#4cc9f0','#a855f7','#f72585','#fff'];
+      for (let i = 0; i < 70; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti-piece';
+        // Cada pedaço tem cor, posição horizontal e velocidade de queda aleatórias
+        el.style.cssText = `
+          left: ${Math.random() * 100}vw;
+          background: ${colors[rand(0, colors.length - 1)]};
+          --dur: ${(Math.random() * 1.5 + 0.8).toFixed(2)}s;
+          animation-delay: ${(Math.random() * 0.6).toFixed(2)}s
+        `;
+        document.body.appendChild(el);
+        // setTimeout remove o elemento após 2.6s para não acumular no DOM
+        setTimeout(() => el.remove(), 2600);
+      }
+    }
+
+
+    // ══════════════════════════════════════════════════════
+    //  SEÇÃO 8 — TIMER (contagem regressiva)
+    // ══════════════════════════════════════════════════════
+    // Recebe 3 parâmetros — o terceiro e quarto são funções (callbacks):
+    //   seconds → duração total em segundos
+    //   onTick  → função chamada a cada segundo para atualizar o visual
+    //   onEnd   → função chamada quando o tempo chegar a zero
+    function startTimer(seconds, onTick, onEnd) {
+      clearInterval(state.timerInt);  // cancela qualquer timer anterior (evita duplicação)
+      state.timer = seconds;
+      onTick(seconds, seconds);       // chama imediatamente para mostrar o valor inicial
+
+      // setInterval chama a função a cada 1000ms (1 segundo)
+      // Guarda o ID retornado em state.timerInt para poder cancelar depois com clearInterval()
+      state.timerInt = setInterval(() => {
+        state.timer--;                 // decrementa um segundo
+        onTick(state.timer, seconds);  // atualiza o visual
+        if (state.timer <= 0) {
+          clearInterval(state.timerInt); // para o intervalo
+          onEnd();                        // chama o callback de fim
+        }
+      }, 1000); // 1000ms = 1 segundo
+    }
+
+
+    // ══════════════════════════════════════════════════════
+    //  SEÇÃO 9 — MOTOR DE RENDERIZAÇÃO
+    //  "render" = desenhar/exibir na tela.
+    //  Cada tela é uma função separada que gera HTML e
+    //  injeta no <div id="app"> substituindo o conteúdo anterior.
+    // ══════════════════════════════════════════════════════
+
+    const app = document.getElementById('app'); // referência ao container principal
+
+    // Função central: decide qual tela renderizar baseado em state.screen
+    function render() {
+      if      (state.screen === 'name')    renderName();
+      else if (state.screen === 'level')   renderLevel();
+      else if (state.screen === 'game')    renderGame();
+      else if (state.screen === 'end')     renderEnd();
+      else if (state.screen === 'ranking') renderRanking();
+    }
+
+
+    // ── TELA 1: NOME DO JOGADOR ───────────────────────────
+    function renderName() {
+      // innerHTML substitui todo o conteúdo interno do elemento pela string HTML
+      // Template literals (crase `) permitem interpolação com ${expressão}
+      app.innerHTML = `
+        <div class="title">🚀 Missão<br>Matemática</div>
+        <div class="subtitle">O jogo de contas mais épico da galáxia!</div>
+        <div class="screen">
+          <div class="card" style="gap:18px;padding:28px 24px;max-width:340px">
+            <div style="font-size:2rem">👾</div>
+            <div style="font-weight:900;font-size:1.1rem">Qual é o seu nome, astronauta?</div>
+            <input
+              id="nameInput"
+              class="name-input"
+              maxlength="20"
+              placeholder="Digite seu nome..."
+              autocomplete="off"
+              onkeydown="if(event.key==='Enter') confirmName()"
+              value="${state.player}">
+            <!-- onkeydown: detecta tecla pressionada; se for Enter, confirma o nome -->
+            <button class="btn-primary" onclick="confirmName()" style="width:100%">
+              Entrar na Missão 🚀
+            </button>
+          </div>
+          <!-- Operador ternário: só mostra o botão Ranking se já existirem entradas salvas -->
+          ${loadRanking().length > 0 ? `
+            <button class="btn-secondary" onclick="goScreen('ranking')">🏆 Ver Ranking</button>
+          ` : ''}
+        </div>`;
+
+      // setTimeout aguarda 100ms para o HTML estar no DOM antes de focar o input
+      setTimeout(() => {
+        const el = document.getElementById('nameInput');
+        if (el) el.focus(); // coloca o cursor no campo de texto automaticamente
+      }, 100);
+    }
+
+
+    // ── TELA 2: ESCOLHA DO NÍVEL ──────────────────────────
+    function renderLevel() {
+      app.innerHTML = `
+        <div class="title">🚀 Missão<br>Matemática</div>
+        <div class="player-chip">👾 ${state.player}</div>
+        <div class="screen">
+          <div style="font-weight:900;font-size:1rem;color:#aaa">Escolha a dificuldade:</div>
+          <!-- .map() percorre cada item do array LEVELS e retorna um novo array de strings HTML -->
+          <!-- .join('') une esses itens em uma única string (sem separador) -->
+          ${LEVELS.map(l => `
+            <button class="level-btn" onclick="startGame('${l.id}')"
+              style="background:${l.bg};border:2px solid ${l.color};color:#fff">
+              <span class="lname">${l.name}</span>
+              <span class="ldesc">${l.desc} · ⏱ ${l.time}s por questão</span>
+            </button>
+          `).join('')}
+          <div class="btn-row" style="margin-top:4px">
+            <button class="btn-secondary" onclick="goScreen('name')">← Trocar Nome</button>
+            ${loadRanking().length > 0 ? `
+              <button class="btn-secondary" onclick="goScreen('ranking')">🏆 Ranking</button>
+            ` : ''}
+          </div>
+        </div>`;
+    }
+
+
+    // ── TELA 3: JOGO ──────────────────────────────────────
+    function renderGame() {
+      const lvl = state.level;   // atalho para o objeto do nível atual
+      const q   = state.current; // atalho para a questão atual
+
+      // Percentual de progresso para a barra (ex: questão 3 de 10 → 30%)
+      const progPct = (state.q / TOTAL_QUESTIONS) * 100;
+
+      // Cor do badge de categoria; usa a cor do nível como fallback (||)
+      const catColor = {
+        'Adição': lvl.color, 'Subtração': '#4cc9f0',
+        'Multiplicação': '#a855f7', 'Divisão': '#f9c74f'
+      }[q.category] || lvl.color;
+
+      app.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px">
+          <div class="title" style="font-size:1.4rem;margin:0">🚀 Missão Mat.</div>
+          <div class="player-chip">👾 ${state.player}</div>
+        </div>
+
+        <!-- HUD: painel com número da questão, pontos e timer circular -->
+        <div class="hud">
+          <div class="hud-box">
+            <div class="hud-label">Questão</div>
+            <!-- +1 porque o índice começa em 0 mas mostramos "1 de 10", não "0 de 10" -->
+            <div class="hud-val">${state.q + 1}<span style="font-size:.9rem;color:#555">/${TOTAL_QUESTIONS}</span></div>
+          </div>
+          <div class="hud-box">
+            <div class="hud-label">Pontos</div>
+            <!-- id="scoreVal" permite que o JS atualize só o número sem recriar tudo -->
+            <div class="hud-val green" id="scoreVal">${state.score}</div>
+          </div>
+          <div class="hud-box" style="flex:0 0 72px">
+            <!-- Timer SVG: dois círculos sobrepostos; o .fg vai sumindo conforme o tempo passa -->
+            <div class="timer-ring">
+              <svg width="60" height="60" viewBox="0 0 60 60">
+                <circle class="bg" cx="30" cy="30" r="26"/>
+                <!-- .fg: stroke-dashoffset é atualizado pelo JS a cada segundo -->
+                <circle class="fg" id="timerArc" cx="30" cy="30" r="26" stroke-dashoffset="0"/>
+              </svg>
+              <div class="timer-val" id="timerVal">${lvl.time}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de progresso: largura em % representa questões respondidas -->
+        <div class="prog-bar"><div class="prog-fill" style="width:${progPct}%"></div></div>
+
+        <div class="card" id="qcard">
+          <span class="category-badge"
+            style="background:${catColor}22;color:${catColor};border:1px solid ${catColor}40">
+            ${q.category}
+          </span>
+          <!-- Fonte menor para questões com parênteses (texto mais longo) -->
+          <div class="question"
+            style="font-size:${q.isParen ? 'clamp(1.3rem,6vw,2.2rem)' : 'clamp(2rem,10vw,3.5rem)'}">
+            ${q.text}
+          </div>
+          <!-- Botões de resposta: "this" passa o próprio elemento clicado para a função -->
+          <div class="options" id="opts">
+            ${q.choices.map(c => `
+              <button class="opt" onclick="answer(${c}, this)">${c}</button>
+            `).join('')}
+          </div>
+          <div class="feedback" id="fb"></div>
+        </div>`;
+
+      // Circunferência do círculo SVG: 2 × π × raio = 2 × 3.14159 × 26 ≈ 163
+      const circ = 2 * Math.PI * 26;
+
+      // Inicia o timer passando as duas funções callback:
+      startTimer(
+        lvl.time,
+        // Callback onTick: chamado a cada segundo para atualizar o visual do timer
+        (t, total) => {
+          const el  = document.getElementById('timerVal');
+          const arc = document.getElementById('timerArc');
+          if (el)  el.textContent = t; // atualiza o número no centro
+
+          if (arc) {
+            // stroke-dashoffset: 0 = círculo cheio, circ = círculo vazio
+            // Quanto menos tempo resta, mais o círculo desaparece
+            arc.style.strokeDashoffset = circ * (1 - t / total);
+            // Muda a cor: azul (tempo ok) → amarelo (atenção) → vermelho (urgente)
+            arc.style.stroke = t <= 5 ? '#f72585' : t <= 8 ? '#f9c74f' : '#4cc9f0';
+          }
+        },
+        // Callback onEnd: chamado quando o tempo acabar
+        () => timeOut()
+      );
+    }
+
+
+    // ── TELA 4: RESULTADO FINAL ───────────────────────────
+    function renderEnd() {
+      clearInterval(state.timerInt); // para qualquer timer ainda rodando
+
+      // Calcula percentual de acertos (arredondado para inteiro)
+      const pct = Math.round(state.correct / TOTAL_QUESTIONS * 100);
+
+      // Operador ternário aninhado: define emoji, mensagem e subtítulo baseados no desempenho
+      const emoji = pct >= 90 ? '🏆' : pct >= 60 ? '⭐' : '💪';
+      const msg   = pct >= 90 ? `Incrível, ${state.player}!`
+                  : pct >= 60 ? `Muito bem, ${state.player}!`
+                  :             `Continue tentando, ${state.player}!`;
+      const sub   = pct >= 90 ? 'Você é um gênio da matemática!'
+                  : pct >= 60 ? 'Ótimo desempenho!'
+                  :             'A prática leva à perfeição!';
+
+      if (pct >= 60) confetti(); // só dispara confete se desempenho for bom
+
+      // Monta o objeto da entrada para o ranking
+      const entry = {
+        name:    state.player,
+        score:   state.score,
+        correct: state.correct,
+        level:   state.level.id,
+        ts:      Date.now() // timestamp único em milissegundos — serve como ID desta partida
+      };
+
+      const ranking = saveRanking(entry); // salva e recebe o ranking atualizado
+
+      // findIndex() retorna o índice do primeiro item que satisfaz a condição
+      // Usamos o timestamp (ts) para identificar com certeza a entrada desta partida
+      const myPos = ranking.findIndex(r => r.ts === entry.ts);
+
+      app.innerHTML = `
+        <div class="screen">
+          <div class="big-emoji">${emoji}</div>
+          <div class="title" style="font-size:2rem">${msg}</div>
+          <div class="subtitle">${sub}</div>
+          <div class="card" style="gap:14px;padding:24px">
+            <div style="font-size:.8rem;color:#888;text-transform:uppercase;letter-spacing:1px">Resultado Final</div>
+            <div class="end-score">${state.score} pts</div>
+            <div style="color:#aaa;font-size:.9rem">
+              ✅ ${state.correct} certas &nbsp;|&nbsp;
+              ❌ ${TOTAL_QUESTIONS - state.correct} erradas &nbsp;|&nbsp;
+              🎯 ${pct}%
+            </div>
+            <!-- Mostra a posição somente se myPos >= 0 (entrada encontrada no ranking) -->
+            ${myPos >= 0 ? `
+              <div style="margin-top:4px;font-size:.88rem;color:${levelColor(state.level.id)};font-weight:900">
+                ${myPos === 0 ? '🥇 Novo recorde! 1º lugar!'
+                : myPos === 1 ? '🥈 2º lugar no ranking!'
+                : myPos === 2 ? '🥉 3º lugar no ranking!'
+                :               `📊 ${myPos + 1}º lugar no ranking`}
+              </div>
+            ` : ''}
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary"   onclick="startGame('${state.level.id}')">🔄 Jogar de Novo</button>
+            <button class="btn-secondary" onclick="goScreen('level')">🎮 Mudar Nível</button>
+          </div>
+          <button class="btn-secondary" onclick="goScreen('ranking')" style="width:200px">🏆 Ver Ranking</button>
+        </div>`;
+    }
+
+
+    // ── TELA 5: RANKING ───────────────────────────────────
+    function renderRanking() {
+      const ranking = loadRanking(); // carrega o array do localStorage
+
+      app.innerHTML = `
+        <div class="title" style="font-size:2rem">🏆 Ranking</div>
+        <div class="subtitle">As maiores pontuações da galáxia</div>
+        <div class="card" style="padding:16px 12px;gap:0">
+          <!-- Se ranking está vazio mostra mensagem; senão mostra a tabela -->
+          ${ranking.length === 0
+            ? `<div class="empty-ranking">Nenhuma pontuação ainda.<br>Seja o primeiro! 🚀</div>`
+            : `<table class="ranking-table">
+                <thead>
+                  <tr><th>#</th><th>Jogador</th><th>Nível</th><th style="text-align:right">Pts</th><th>Data</th></tr>
+                </thead>
+                <tbody>
+                  <!-- .map(r, i) → r = cada entrada do ranking, i = seu índice (0, 1, 2...) -->
+                  ${ranking.map((r, i) => `
+                    <tr class="${r.name === state.player ? 'rank-highlight' : ''}">
+                    <!-- Destaca com fundo amarelo se for o jogador atual -->
+                      <td class="rank-pos ${medalOf(i)}">${medalEmoji(i)}</td>
+                      <td style="font-weight:900">${r.name}</td>
+                      <td>
+                        <span class="rank-level"
+                          style="background:${levelColor(r.level)}22;color:${levelColor(r.level)}">
+                          ${levelLabel(r.level)}
+                        </span>
+                      </td>
+                      <td class="rank-score">${r.score}</td>
+                      <td class="rank-date">${fmtDate(r.ts)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>`
+          }
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary"   onclick="goScreen('level')">🎮 Jogar</button>
+          <button class="btn-secondary" onclick="goScreen('name')">👾 Trocar Nome</button>
+        </div>
+        ${ranking.length > 0 ? `
+          <button
+            onclick="if(confirm('Apagar todo o ranking?')){ clearRanking(); renderRanking(); }"
+            style="background:none;border:none;color:#555;font-size:.8rem;
+                   cursor:pointer;font-family:Nunito,sans-serif;font-weight:700;margin-top:-8px">
+            🗑 Apagar ranking
+          </button>
+          <!-- confirm() abre diálogo nativo do navegador pedindo confirmação -->
+          <!-- Se OK → true → executa clearRanking() e re-renderiza -->
+        ` : ''}`;
+    }
+
+
+    // ══════════════════════════════════════════════════════
+    //  SEÇÃO 10 — AÇÕES (funções chamadas pelos botões)
+    // ══════════════════════════════════════════════════════
+
+    // Confirma o nome digitado e avança para a tela de nível
+    function confirmName() {
+      // ?. é "optional chaining": acessa .value só se o elemento existir (evita erro)
+      // .trim() remove espaços no início e fim da string ("  João  " → "João")
+      const val = (document.getElementById('nameInput')?.value || '').trim();
+
+      // Validação: campo vazio não permite avançar
+      if (!val) {
+        document.getElementById('nameInput')?.focus();
+        return; // "return" sem valor encerra a função imediatamente
+      }
+
+      state.player = val;     // salva o nome no estado global
+      state.screen = 'level'; // define a próxima tela
+      render();               // re-renderiza (agora mostra a tela de nível)
+    }
+
+    // Navega para uma tela qualquer, sempre cancelando o timer antes
+    function goScreen(s) {
+      clearInterval(state.timerInt); // IMPORTANTE: sempre cancelar timer ao trocar de tela
+      state.screen = s;
+      render();
+    }
+
+    // Inicia uma nova partida no nível indicado pelo id
+    function startGame(levelId) {
+      clearInterval(state.timerInt);
+
+      // .find() percorre o array e retorna o primeiro item que satisfaz a condição
+      state.level   = LEVELS.find(l => l.id === levelId);
+      state.q       = 0;    // reseta contador de questões
+      state.score   = 0;    // reseta pontuação
+      state.correct = 0;    // reseta acertos
+      state.screen  = 'game';
+      state.current = genQuestion(state.level); // gera a primeira questão
+      render();
+    }
+
+    // Processa a resposta clicada pelo jogador
+    // val = número do botão clicado | btn = o elemento <button> em si
+    function answer(val, btn) {
+      clearInterval(state.timerInt); // para o timer assim que o jogador responde
+
+      // querySelectorAll retorna todos os elementos com a classe .opt
+      // forEach percorre cada um e chama a função passada
+      const opts = document.querySelectorAll('.opt');
+      opts.forEach(o => o.disabled = true); // desabilita todos para evitar duplo clique
+
+      const fb         = document.getElementById('fb');
+      const isCorrect  = (val === state.current.ans); // compara com a resposta correta
+
+      if (isCorrect) {
+        btn.classList.add('correct');          // aplica estilo verde no botão clicado
+        // Bônus de velocidade: 10 pontos base + segundos restantes
+        state.score   += 10 + state.timer;
+        state.correct += 1;
+        // Atualiza só o número da pontuação sem recriar toda a tela de jogo
+        document.getElementById('scoreVal').textContent = state.score;
+        fb.className   = 'feedback ok';
+        fb.textContent = `✅ Correto! +${10 + state.timer} pts`;
+      } else {
+        btn.classList.add('wrong');            // aplica estilo vermelho no botão errado
+        // Destaca qual era o botão correto para o jogador aprender
+        opts.forEach(o => {
+          // Number() converte a string do textContent para número antes de comparar
+          if (Number(o.textContent) === state.current.ans) o.classList.add('correct');
+        });
+        fb.className   = 'feedback fail';
+        fb.textContent = `❌ Era ${state.current.ans}`;
+      }
+
+      // setTimeout aguarda 1.2s para o jogador ver o feedback antes de avançar
+      setTimeout(nextQ, 1200);
+    }
+
+    // Chamada quando o tempo esgota antes de o jogador responder
+    function timeOut() {
+      const opts = document.querySelectorAll('.opt');
+      opts.forEach(o => o.disabled = true);
+      // Destaca a resposta correta para o jogador ver qual era
+      opts.forEach(o => {
+        if (Number(o.textContent) === state.current.ans) o.classList.add('correct');
+      });
+      const fb = document.getElementById('fb');
+      if (fb) {
+        fb.className   = 'feedback fail';
+        fb.textContent = `⏰ Tempo! Era ${state.current.ans}`;
+      }
+      setTimeout(nextQ, 1300); // aguarda 1.3s e avança para a próxima
+    }
+
+    // Avança para a próxima questão ou encerra o jogo
+    function nextQ() {
+      state.q++; // incrementa o contador
+
+      // Se chegou no total de questões, vai para a tela de fim
+      if (state.q >= TOTAL_QUESTIONS) {
+        state.screen = 'end';
+        render();
+        return; // encerra a função aqui
+      }
+
+      // Senão: gera nova questão e re-renderiza a tela de jogo
+      state.current = genQuestion(state.level);
+      renderGame(); // chama renderGame() diretamente (mais rápido que render())
+    }
+
+
+    // ══════════════════════════════════════════════════════
+    //  SEÇÃO 11 — INICIALIZAÇÃO
+    //  Última linha executada ao carregar o script.
+    //  Chama render() pela primeira vez → exibe a tela de nome.
+    // ══════════════════════════════════════════════════════
+    render();
+
+  </script>
 </body>
 </html>
